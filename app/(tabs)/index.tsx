@@ -1,29 +1,35 @@
 import { ScoreDisplay } from "@/components/ScoreDisplay";
 import { MatchData } from "@/constants/types";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { Pressable, StyleSheet, Text, Vibration, View } from "react-native";
+import * as Watch from "react-native-watch-connectivity";
 
 export default function TabOneScreen() {
   const [match, setMatch] = useState<MatchData>({
-    player1: { score: 0, games: 0, sets: 0, adv: false },
-    player2: { score: 0, games: 0, sets: 0, adv: false },
+    player1: { scores: 0, games: 0, sets: 0, adv: false },
+    player2: { scores: 0, games: 0, sets: 0, adv: false },
     isDuece: false,
   });
+
+  useEffect(() => {
+    console.log("Syncing to Watch:");
+    Watch.updateApplicationContext(match);
+  }, [match]);
 
   const addPoint = (player: "player1" | "player2") => {
     Vibration.vibrate(50);
 
     const p1Next =
-      player === "player1" ? match.player1.score + 1 : match.player1.score;
+      player === "player1" ? match.player1.scores + 1 : match.player1.scores;
     const p2Next =
-      player === "player2" ? match.player2.score + 1 : match.player2.score;
+      player === "player2" ? match.player2.scores + 1 : match.player2.scores;
 
     // check for deuce
     if (p1Next === 3 && p2Next === 3) {
       setMatch((prev) => ({
         ...prev,
-        player1: { ...prev.player1, score: 3 },
-        player2: { ...prev.player2, score: 3 },
+        player1: { ...prev.player1, scores: 3 },
+        player2: { ...prev.player2, scores: 3 },
         isDuece: true,
       }));
       return;
@@ -39,7 +45,7 @@ export default function TabOneScreen() {
         ...prev,
         [player]: {
           ...prev[player],
-          score: player === "player1" ? p1Next : p2Next,
+          scores: player === "player1" ? p1Next : p2Next,
         },
       }));
     }
@@ -86,8 +92,8 @@ export default function TabOneScreen() {
 
   const resetMatch = () => {
     setMatch({
-      player1: { score: 0, games: 0, sets: 0, adv: false },
-      player2: { score: 0, games: 0, sets: 0, adv: false },
+      player1: { scores: 0, games: 0, sets: 0, adv: false },
+      player2: { scores: 0, games: 0, sets: 0, adv: false },
       isDuece: false,
     });
   };
@@ -95,8 +101,8 @@ export default function TabOneScreen() {
   const resetScore = () => {
     setMatch((prev) => ({
       ...prev,
-      player1: { ...prev.player1, score: 0, adv: false },
-      player2: { ...prev.player2, score: 0, adv: false },
+      player1: { ...prev.player1, scores: 0, adv: false },
+      player2: { ...prev.player2, scores: 0, adv: false },
       isDuece: false,
     }));
   };

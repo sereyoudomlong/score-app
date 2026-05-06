@@ -1,5 +1,5 @@
 export type PlayerData = {
-  score: number;
+  scores: number;
   games: number;
   sets: number;
   adv: boolean;

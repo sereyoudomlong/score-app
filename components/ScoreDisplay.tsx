@@ -17,7 +17,9 @@ export const ScoreDisplay = ({ matchData, onPress }: ScoreDisplayProps) => {
 
     // 2. Otherwise, just return the standard point (The Default)
     const points =
-      player === "player1" ? matchData.player1.score : matchData.player2.score;
+      player === "player1"
+        ? matchData.player1.scores
+        : matchData.player2.scores;
     return scoreMap[points];
   };
 
