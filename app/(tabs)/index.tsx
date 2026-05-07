@@ -13,7 +13,17 @@ export default function TabOneScreen() {
 
   useEffect(() => {
     console.log("Syncing to Watch:");
-    Watch.updateApplicationContext(match);
+    // Watch.updateApplicationContext(match);
+    Watch.sendMessage(
+      match,
+      (reply) => {
+        console.log("Watch received!");
+      },
+      (err) => {
+        console.log("Watch unreachable, syncing via Context instead.");
+        Watch.updateApplicationContext(match);
+      },
+    );
   }, [match]);
 
   const addPoint = (player: "player1" | "player2") => {

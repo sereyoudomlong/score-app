@@ -35,12 +35,13 @@ final class WatchViewModel: NSObject, ObservableObject, WCSessionDelegate{
     }
   }
   
-  func session(_ session: WCSession, didReceiveApplicationContext applicationContext: [String : Any]) {
-      print("WATCH RECEIVED DATA: \(applicationContext)")
+  func session(_ session: WCSession, didReceiveMessage message: [String : Any], replyHandler: @escaping ([String : Any]) -> Void) {
+      print("WATCH RECEIVED DATA: \(message)")
       
       DispatchQueue.main.async {
           do {
-              let jsonData = try JSONSerialization.data(withJSONObject: applicationContext)
+            replyHandler(["status" : "success"])
+              let jsonData = try JSONSerialization.data(withJSONObject: message)
               let decodedData = try JSONDecoder().decode(MatchData.self, from: jsonData)
               
               self.matchData = decodedData
