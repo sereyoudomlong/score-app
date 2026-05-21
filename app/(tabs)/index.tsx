@@ -9,6 +9,7 @@ export default function TabOneScreen() {
     player1: { scores: 0, games: 0, sets: 0, adv: false },
     player2: { scores: 0, games: 0, sets: 0, adv: false },
     isDuece: false,
+    version: 0,
   });
 
   useEffect(() => {
@@ -26,8 +27,28 @@ export default function TabOneScreen() {
     );
   }, [match]);
 
-  const addPoint = (player: "player1" | "player2") => {
+  useEffect(() => {
+    const unsubscribe = Watch.watchEvents.on("message", (message) => {
+      const { action, player } = message;
+      console.log(message);
+      if (action === "ADD_POINT") {
+        addPoint(player as "player1" | "player2", match.isDuece);
+      }
+    });
+    return () => {
+      if (typeof unsubscribe === "function") {
+        unsubscribe();
+      }
+    };
+  }, [match]);
+
+  const addPoint = (player: "player1" | "player2", isDeuce: boolean) => {
     Vibration.vibrate(50);
+
+    if (isDeuce) {
+      deuceScore(player);
+      return;
+    }
 
     const p1Next =
       player === "player1" ? match.player1.scores + 1 : match.player1.scores;
@@ -41,6 +62,7 @@ export default function TabOneScreen() {
         player1: { ...prev.player1, scores: 3 },
         player2: { ...prev.player2, scores: 3 },
         isDuece: true,
+        version: prev.version + 1,
       }));
       return;
     }
@@ -57,6 +79,7 @@ export default function TabOneScreen() {
           ...prev[player],
           scores: player === "player1" ? p1Next : p2Next,
         },
+        version: prev.version + 1,
       }));
     }
   };
@@ -68,6 +91,7 @@ export default function TabOneScreen() {
         ...prev[player],
         games: prev[player].games + 1,
       },
+      version: prev.version + 1,
     }));
     resetScore();
   };
@@ -89,6 +113,7 @@ export default function TabOneScreen() {
         ...prev,
         player1: { ...prev.player1, adv: false },
         player2: { ...prev.player2, adv: false },
+        version: prev.version + 1,
       }));
       return;
     }
@@ -97,6 +122,7 @@ export default function TabOneScreen() {
     setMatch((prev) => ({
       ...prev,
       [player]: { ...prev[player], adv: true },
+      version: prev.version + 1,
     }));
   };
 
@@ -105,7 +131,9 @@ export default function TabOneScreen() {
       player1: { scores: 0, games: 0, sets: 0, adv: false },
       player2: { scores: 0, games: 0, sets: 0, adv: false },
       isDuece: false,
+      version: 0,
     });
+    Watch.sendMessage({ action: "RESET_MATCH" });
   };
 
   const resetScore = () => {
@@ -114,16 +142,14 @@ export default function TabOneScreen() {
       player1: { ...prev.player1, scores: 0, adv: false },
       player2: { ...prev.player2, scores: 0, adv: false },
       isDuece: false,
+      version: prev.version + 1,
     }));
   };
 
   return (
     <View style={styles.container}>
       <Text style={styles.header}>MATCH POINT</Text>
-      <ScoreDisplay
-        matchData={match}
-        onPress={match.isDuece ? deuceScore : addPoint}
-      />
+      <ScoreDisplay matchData={match} onPress={addPoint} />
       <Pressable style={styles.resetButton} onPress={resetMatch}>
         <Text style={styles.resetText}>RESET MATCH</Text>
       </Pressable>
