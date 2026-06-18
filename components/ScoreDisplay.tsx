@@ -1,4 +1,5 @@
 import { MatchData, scoreMap } from "@/constants/types";
+import { LinearGradient } from "expo-linear-gradient";
 import { Pressable, StyleSheet, Text, View } from "react-native";
 
 type PlayerID = "player1" | "player2";
@@ -31,20 +32,24 @@ export const ScoreDisplay = ({ matchData, onPress }: ScoreDisplayProps) => {
       >
         <Text style={styles.playerLabel}>PLAYER 1</Text>
         <Text style={styles.scoreText}>{showScore("player1")}</Text>
-        <Text style={[styles.gameScoreText, { bottom: 50 }]}>
-          {matchData.player1.games}
-        </Text>
       </Pressable>
-      <View style={styles.divider} />
+      <LinearGradient
+        // Horizontal gradient (Left to Right)
+        start={{ x: 0, y: 0 }}
+        end={{ x: 1, y: 0 }}
+        colors={[
+          "transparent", // Starts completely invisible on the left
+          "rgba(0, 0, 0, 0.15)", // Fades into a solid, subtle gray in the middle
+          "transparent", // Fizzles back out to invisible on the right
+        ]}
+        style={styles.divider}
+      />
       <Pressable
         style={styles.playerSection}
         onPress={() => onPress("player2", matchData.isDuece)}
       >
         <Text style={styles.playerLabel}>PLAYER 2</Text>
         <Text style={styles.scoreText}>{showScore("player2")}</Text>
-        <Text style={[styles.gameScoreText, { top: 50 }]}>
-          {matchData.player2.games}
-        </Text>
       </Pressable>
     </View>
   );
@@ -54,14 +59,13 @@ const styles = StyleSheet.create({
   scoreBoard: {
     flex: 1,
     width: "100%",
+    height: "auto",
     flexDirection: "column",
   },
   playerSection: {
     flex: 1,
     justifyContent: "center",
     alignItems: "center",
-    borderBottomWidth: 1,
-    borderBottomColor: "#222",
   },
   playerLabel: {
     color: "#888",
@@ -81,8 +85,9 @@ const styles = StyleSheet.create({
     right: 20,
   },
   divider: {
-    height: 2,
-    backgroundColor: "#32CD32",
-    width: "100%",
+    width: "70%", // Keeps it inset so it doesn't touch the absolute edges of the phone
+    height: 2, // The thickness in the exact middle
+    marginVertical: 30, // Gives the scores and bottom controls room to breathe
+    alignSelf: "center", // Centers the divider within the parent container
   },
 });

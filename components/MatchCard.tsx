@@ -52,7 +52,7 @@ const styles = StyleSheet.create({
     height: 120,
     backgroundColor: "#fff",
     borderRadius: 10,
-    marginBottom: 15,
+
     // Shadow for iOS
     shadowColor: "#000",
     shadowOffset: { width: 0, height: 2 },
@@ -62,7 +62,7 @@ const styles = StyleSheet.create({
     elevation: 3,
   },
   cardHeader: {
-    backgroundColor: "#2f80ed",
+    backgroundColor: "#1d7008",
     flexDirection: "row",
     justifyContent: "space-between",
     alignItems: "baseline",
