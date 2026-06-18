@@ -1,8 +1,8 @@
 import { ScoreDisplay } from "@/components/ScoreDisplay";
 import { MatchData } from "@/constants/types";
-import { useEffect, useState } from "react";
+import { useState } from "react";
 import { Pressable, StyleSheet, Text, Vibration, View } from "react-native";
-import * as Watch from "react-native-watch-connectivity";
+// import * as Watch from "react-native-watch-connectivity";
 
 export default function TabOneScreen() {
   const [match, setMatch] = useState<MatchData>({
@@ -12,35 +12,35 @@ export default function TabOneScreen() {
     version: 0,
   });
 
-  useEffect(() => {
-    console.log("Syncing to Watch:");
-    // Watch.updateApplicationContext(match);
-    Watch.sendMessage(
-      match,
-      (reply) => {
-        console.log("Watch received!");
-      },
-      (err) => {
-        console.log("Watch unreachable, syncing via Context instead.");
-        Watch.updateApplicationContext(match);
-      },
-    );
-  }, [match]);
+  // useEffect(() => {
+  //   console.log("Syncing to Watch:");
+  //   // Watch.updateApplicationContext(match);
+  //   Watch.sendMessage(
+  //     match,
+  //     (reply) => {
+  //       console.log("Watch received!");
+  //     },
+  //     (err) => {
+  //       console.log("Watch unreachable, syncing via Context instead.");
+  //       Watch.updateApplicationContext(match);
+  //     },
+  //   );
+  // }, [match]);
 
-  useEffect(() => {
-    const unsubscribe = Watch.watchEvents.on("message", (message) => {
-      const { action, player } = message;
-      console.log(message);
-      if (action === "ADD_POINT") {
-        addPoint(player as "player1" | "player2", match.isDuece);
-      }
-    });
-    return () => {
-      if (typeof unsubscribe === "function") {
-        unsubscribe();
-      }
-    };
-  }, [match]);
+  // useEffect(() => {
+  //   const unsubscribe = Watch.watchEvents.on("message", (message) => {
+  //     const { action, player } = message;
+  //     console.log(message);
+  //     if (action === "ADD_POINT") {
+  //       addPoint(player as "player1" | "player2", match.isDuece);
+  //     }
+  //   });
+  //   return () => {
+  //     if (typeof unsubscribe === "function") {
+  //       unsubscribe();
+  //     }
+  //   };
+  // }, [match]);
 
   const addPoint = (player: "player1" | "player2", isDeuce: boolean) => {
     Vibration.vibrate(50);
@@ -133,7 +133,7 @@ export default function TabOneScreen() {
       isDuece: false,
       version: 0,
     });
-    Watch.sendMessage({ action: "RESET_MATCH" });
+    // Watch.sendMessage({ action: "RESET_MATCH" });
   };
 
   const resetScore = () => {
