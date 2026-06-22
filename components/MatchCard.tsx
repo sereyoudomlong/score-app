@@ -1,3 +1,4 @@
+import { useState } from "react";
 import { StyleSheet, Text, View } from "react-native";
 
 /**
@@ -10,6 +11,11 @@ import { StyleSheet, Text, View } from "react-native";
  */
 
 export default function MatchCard() {
+  const [team1, setTeam1] = useState({
+    name: "John",
+    scores: [1, 2, 3],
+  });
+
   return (
     <View style={styles.container}>
       <View style={styles.cardHeader}>

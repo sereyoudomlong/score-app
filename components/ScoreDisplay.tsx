@@ -34,14 +34,9 @@ export const ScoreDisplay = ({ matchData, onPress }: ScoreDisplayProps) => {
         <Text style={styles.scoreText}>{showScore("player1")}</Text>
       </Pressable>
       <LinearGradient
-        // Horizontal gradient (Left to Right)
         start={{ x: 0, y: 0 }}
         end={{ x: 1, y: 0 }}
-        colors={[
-          "transparent", // Starts completely invisible on the left
-          "rgba(0, 0, 0, 0.15)", // Fades into a solid, subtle gray in the middle
-          "transparent", // Fizzles back out to invisible on the right
-        ]}
+        colors={["transparent", "rgba(0, 0, 0, 0.15)", "transparent"]}
         style={styles.divider}
       />
       <Pressable
