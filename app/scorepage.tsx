@@ -1,122 +1,183 @@
 import MatchCard from "@/components/MatchCard";
 import { ScoreDisplay } from "@/components/ScoreDisplay";
-import { MatchData } from "@/constants/types";
+import {
+  GameData,
+  MatchData,
+  PlayerData,
+  SetData,
+  TeamData,
+} from "@/constants/types";
 import Ionicons from "@expo/vector-icons/Ionicons";
 import { router } from "expo-router";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { Pressable, StyleSheet, Text, Vibration, View } from "react-native";
 // import * as Watch from "react-native-watch-connectivity";
 
 export default function ScorePage() {
-  const [match, setMatch] = useState<MatchData>({
-    player1: { name: "John", scores: 0, games: 0, sets: 0, adv: false },
-    player2: { name: "Jake", scores: 0, games: 0, sets: 0, adv: false },
+  // Mock Data (Replace with actual data fetching logic)
+  const [player1, setPlayer1] = useState<PlayerData>({ name: "John" });
+  const [player2, setPlayer2] = useState<PlayerData>({ name: "Jake" });
+  const [team1, setTeam1] = useState<TeamData>({ players: [player1] });
+  const [team2, setTeam2] = useState<TeamData>({ players: [player2] });
+  const [liveGame, setLiveGame] = useState<GameData>({
+    team1Points: 0,
+    team2Points: 0,
     isDuece: false,
+    adv: null,
+  });
+
+  const [liveSet, setLiveSet] = useState<SetData>({
+    team1GamesWon: 0,
+    team2GamesWon: 0,
+  });
+
+  const [sets, setSets] = useState<SetData[]>();
+
+  const [match, setMatch] = useState<MatchData>({
+    team1,
+    team2,
+    liveGame,
+    sets,
     version: 0,
   });
 
-  const addPoint = (player: "player1" | "player2", isDeuce: boolean) => {
+  //DELETE THIS WHEN DONE
+  useEffect(() => {
+    printData();
+  }, [liveGame]);
+
+  //DELETE THIS WHEN DONE
+  const printData = () => {
+    console.log(
+      "=============================== Current Match Data =============================== ",
+    );
+    console.log("Player 1:", player1);
+    console.log("Player 2:", player2);
+    console.log("Team 1:", team1);
+    console.log("Team 2:", team2);
+    console.log("Live Game:", liveGame);
+    console.log("Live Set:", liveSet);
+    console.log("Sets:", sets);
+    console.log("Match:", match);
+  };
+
+  const addPoint = (team: "team1" | "team2", isDeuce: boolean) => {
     Vibration.vibrate(50);
 
     if (isDeuce) {
-      deuceScore(player);
+      deuceScore(team);
       return;
     }
 
     const p1Next =
-      player === "player1" ? match.player1.scores + 1 : match.player1.scores;
+      team === "team1" ? liveGame.team1Points + 1 : liveGame.team1Points;
     const p2Next =
-      player === "player2" ? match.player2.scores + 1 : match.player2.scores;
+      team === "team2" ? liveGame.team2Points + 1 : liveGame.team2Points;
 
     // check for deuce
     if (p1Next === 3 && p2Next === 3) {
-      setMatch((prev) => ({
+      setLiveGame((prev) => ({
         ...prev,
-        player1: { ...prev.player1, scores: 3 },
-        player2: { ...prev.player2, scores: 3 },
+        team1Points: 3,
+        team2Points: 3,
         isDuece: true,
-        version: prev.version + 1,
       }));
       return;
     }
 
     // Check for Win
     if (p1Next === 4) {
-      winGame("player1");
+      winGame("team1");
     } else if (p2Next === 4) {
-      winGame("player2");
+      winGame("team2");
     } else {
-      setMatch((prev) => ({
+      setLiveGame((prev) => ({
         ...prev,
-        [player]: {
-          ...prev[player],
-          scores: player === "player1" ? p1Next : p2Next,
-        },
-        version: prev.version + 1,
+        team1Points: team === "team1" ? p1Next : prev.team1Points,
+        team2Points: team === "team2" ? p2Next : prev.team2Points,
       }));
     }
-  };
-
-  const winGame = (player: "player1" | "player2") => {
-    setMatch((prev) => ({
-      ...prev,
-      [player]: {
-        ...prev[player],
-        games: prev[player].games + 1,
-      },
-      version: prev.version + 1,
-    }));
-    resetScore();
   };
 
   // Scoring logic for deuce
-  const deuceScore = (player: "player1" | "player2") => {
-    // find the player and opp to compare
-    const opponent = player === "player1" ? "player2" : "player1";
+  const deuceScore = (team: "team1" | "team2") => {
+    // find the team and opp to compare
+    const opponent = team === "team1" ? "team2" : "team1";
 
     // if player have adv win the game
-    if (match[player].adv) {
-      winGame(player);
+    if (liveGame.adv === team) {
+      winGame(team);
       return;
-    }
-
-    // else reset the adv point
-    if (match[opponent].adv) {
-      setMatch((prev) => ({
+    } else if (liveGame.adv === opponent) {
+      setLiveGame((prev) => ({
         ...prev,
-        player1: { ...prev.player1, adv: false },
-        player2: { ...prev.player2, adv: false },
-        version: prev.version + 1,
+        adv: null,
       }));
-      return;
+    } else if (liveGame.adv === null) {
+      setLiveGame((prev) => ({
+        ...prev,
+        adv: team,
+      }));
     }
+  };
 
-    // if player dont have the adv but score give them adv
-    setMatch((prev) => ({
+  const winGame = (team: "team1" | "team2") => {
+    // to counteract the async state update of liveGame
+    const nextTeam1Games =
+      team === "team1" ? liveSet.team1GamesWon + 1 : liveSet.team1GamesWon;
+    const nextTeam2Games =
+      team === "team2" ? liveSet.team2GamesWon + 1 : liveSet.team2GamesWon;
+
+    setLiveSet((prev) => ({
       ...prev,
-      [player]: { ...prev[player], adv: true },
-      version: prev.version + 1,
+      team1GamesWon: nextTeam1Games,
+      team2GamesWon: nextTeam2Games,
     }));
+    resetGame();
+
+    // Check for Set Win (First to 6 games with at least 2 games difference)
+    if (
+      (team === "team1" &&
+        nextTeam1Games >= 6 &&
+        nextTeam1Games - nextTeam2Games >= 2) ||
+      (team === "team2" &&
+        nextTeam2Games >= 6 &&
+        nextTeam2Games - nextTeam1Games >= 2)
+    ) {
+      winSet(nextTeam1Games, nextTeam2Games);
+    }
+  };
+
+  const winSet = (t1Games: number, t2Games: number) => {
+    const completedSet: SetData = {
+      team1GamesWon: t1Games,
+      team2GamesWon: t2Games,
+    };
+    setSets((prev) => [...(prev || []), completedSet]);
+    resetSet();
+  };
+
+  const resetGame = () => {
+    setLiveGame({
+      team1Points: 0,
+      team2Points: 0,
+      isDuece: false,
+      adv: null,
+    });
+  };
+
+  const resetSet = () => {
+    setLiveSet({
+      team1GamesWon: 0,
+      team2GamesWon: 0,
+    });
   };
 
   const resetMatch = () => {
-    setMatch({
-      player1: { scores: 0, games: 0, sets: 0, adv: false },
-      player2: { scores: 0, games: 0, sets: 0, adv: false },
-      isDuece: false,
-      version: 0,
-    });
-    // Watch.sendMessage({ action: "RESET_MATCH" });
-  };
-
-  const resetScore = () => {
-    setMatch((prev) => ({
-      ...prev,
-      player1: { ...prev.player1, scores: 0, adv: false },
-      player2: { ...prev.player2, scores: 0, adv: false },
-      isDuece: false,
-      version: prev.version + 1,
-    }));
+    resetGame();
+    resetSet();
+    setSets([]);
+    setMatch({ team1, team2, liveGame, sets, version: 0 });
   };
 
   return (
@@ -136,12 +197,9 @@ export default function ScorePage() {
       </View>
 
       <MatchCard></MatchCard>
-      <ScoreDisplay matchData={match} onPress={addPoint}></ScoreDisplay>
+      <ScoreDisplay gameData={liveGame} onPress={addPoint}></ScoreDisplay>
       <View style={styles.bottomContainer}>
-        <Pressable
-          style={styles.resetButton}
-          onPress={() => router.navigate("/")}
-        >
+        <Pressable style={styles.resetButton} onPress={resetMatch}>
           <Text style={styles.resetText}>FINISH</Text>
         </Pressable>
       </View>

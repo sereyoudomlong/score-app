@@ -1,26 +1,24 @@
-import { MatchData, scoreMap } from "@/constants/types";
+import { GameData, scoreMap } from "@/constants/types";
 import { LinearGradient } from "expo-linear-gradient";
 import { Pressable, StyleSheet, Text, View } from "react-native";
 
-type PlayerID = "player1" | "player2";
+type teamID = "team1" | "team2";
 
 interface ScoreDisplayProps {
-  matchData: MatchData;
-  onPress: (player: PlayerID, isDuece: boolean) => void;
+  gameData: GameData;
+  onPress: (team: teamID, isDuece: boolean) => void;
 }
 
-export const ScoreDisplay = ({ matchData, onPress }: ScoreDisplayProps) => {
-  const showScore = (player: "player1" | "player2") => {
+export const ScoreDisplay = ({ gameData, onPress }: ScoreDisplayProps) => {
+  const showScore = (team: "team1" | "team2") => {
     // 1. Handle the "Advantage" case first (The Exception)
-    if (matchData.isDuece && matchData[player].adv) {
+    if (gameData.isDuece && gameData.adv === team) {
       return "AD";
     }
 
     // 2. Otherwise, just return the standard point (The Default)
     const points =
-      player === "player1"
-        ? matchData.player1.scores
-        : matchData.player2.scores;
+      team === "team1" ? gameData.team1Points : gameData.team2Points;
     return scoreMap[points];
   };
 
@@ -28,10 +26,10 @@ export const ScoreDisplay = ({ matchData, onPress }: ScoreDisplayProps) => {
     <View style={styles.scoreBoard}>
       <Pressable
         style={styles.playerSection}
-        onPress={() => onPress("player1", matchData.isDuece)}
+        onPress={() => onPress("team1", gameData.isDuece)}
       >
         <Text style={styles.playerLabel}>PLAYER 1</Text>
-        <Text style={styles.scoreText}>{showScore("player1")}</Text>
+        <Text style={styles.scoreText}>{showScore("team1")}</Text>
       </Pressable>
       <LinearGradient
         start={{ x: 0, y: 0 }}
@@ -41,10 +39,10 @@ export const ScoreDisplay = ({ matchData, onPress }: ScoreDisplayProps) => {
       />
       <Pressable
         style={styles.playerSection}
-        onPress={() => onPress("player2", matchData.isDuece)}
+        onPress={() => onPress("team2", gameData.isDuece)}
       >
         <Text style={styles.playerLabel}>PLAYER 2</Text>
-        <Text style={styles.scoreText}>{showScore("player2")}</Text>
+        <Text style={styles.scoreText}>{showScore("team2")}</Text>
       </Pressable>
     </View>
   );
