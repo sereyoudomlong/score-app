@@ -1,3 +1,4 @@
+import { SetData } from "@/constants/types";
 import { useState } from "react";
 import { StyleSheet, Text, View } from "react-native";
 
@@ -10,7 +11,12 @@ import { StyleSheet, Text, View } from "react-native";
  * --------------------------------------
  */
 
-export default function MatchCard() {
+interface MatchCardProps {
+  liveSet: SetData;
+  sets: SetData[] | undefined;
+}
+
+export default function MatchCard({ liveSet, sets }: MatchCardProps) {
   const [team1, setTeam1] = useState({
     name: "John",
     scores: [1, 2, 3],
@@ -29,10 +35,12 @@ export default function MatchCard() {
             <Text style={styles.playerName}>John</Text>
           </View>
           <View style={styles.scoreContainer}>
-            {/* todo: Replace with actual set scores */}
-            <Text style={styles.scoreText}>1</Text>
-            <Text style={styles.scoreText}>2</Text>
-            <Text style={styles.scoreText}>3</Text>
+            {sets?.map((set, index) => (
+              <Text key={index} style={styles.scoreText}>
+                {set.team1GamesWon}
+              </Text>
+            ))}
+            <Text style={styles.scoreText}>{liveSet.team1GamesWon}</Text>
           </View>
         </View>
         <View style={styles.playerRow}>
@@ -41,10 +49,12 @@ export default function MatchCard() {
             <Text style={styles.playerName}>Player 2</Text>
           </View>
           <View style={styles.scoreContainer}>
-            {/* todo: Replace with actual set scores */}
-            <Text style={styles.scoreText}>6</Text>
-            <Text style={styles.scoreText}>6</Text>
-            <Text style={styles.scoreText}>6</Text>
+            {sets?.map((set, index) => (
+              <Text key={index} style={styles.scoreText}>
+                {set.team2GamesWon}
+              </Text>
+            ))}
+            <Text style={styles.scoreText}>{liveSet.team2GamesWon}</Text>
           </View>
         </View>
       </View>

@@ -196,7 +196,7 @@ export default function ScorePage() {
         </Pressable>
       </View>
 
-      <MatchCard></MatchCard>
+      <MatchCard liveSet={liveSet} sets={sets} />
       <ScoreDisplay gameData={liveGame} onPress={addPoint}></ScoreDisplay>
       <View style={styles.bottomContainer}>
         <Pressable style={styles.resetButton} onPress={resetMatch}>
