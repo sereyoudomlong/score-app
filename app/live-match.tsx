@@ -8,17 +8,25 @@ import {
   TeamData,
 } from "@/constants/types";
 import Ionicons from "@expo/vector-icons/Ionicons";
-import { router } from "expo-router";
+import { router, useNavigation } from "expo-router";
 import { useEffect, useState } from "react";
 import { Pressable, StyleSheet, Text, Vibration, View } from "react-native";
 // import * as Watch from "react-native-watch-connectivity";
 
-export default function ScorePage() {
+export default function LiveMatchScreen() {
   // Mock Data (Replace with actual data fetching logic)
   const [player1, setPlayer1] = useState<PlayerData>({ name: "John" });
   const [player2, setPlayer2] = useState<PlayerData>({ name: "Jake" });
-  const [team1, setTeam1] = useState<TeamData>({ players: [player1] });
-  const [team2, setTeam2] = useState<TeamData>({ players: [player2] });
+  const [player3, setPlayer3] = useState<PlayerData>({ name: "Jane" });
+  const [player4, setPlayer4] = useState<PlayerData>({ name: "Jill" });
+  const [team1, setTeam1] = useState<TeamData>({
+    players: [player1, player3],
+    name: `${player1.name} & ${player3.name}`,
+  });
+  const [team2, setTeam2] = useState<TeamData>({
+    players: [player2, player4],
+    name: `${player2.name} & ${player4.name}`,
+  });
   const [liveGame, setLiveGame] = useState<GameData>({
     team1Points: 0,
     team2Points: 0,
@@ -180,8 +188,21 @@ export default function ScorePage() {
     setMatch({ team1, team2, liveGame, sets, version: 0 });
   };
 
+  const navigation = useNavigation();
+
+  const handleBackToHistory = () => {
+    // 1. Force the current stack screen to animate out to the right
+    navigation.setOptions({
+      animation: "slide_from_left",
+    });
+
+    // 2. Head back to your homepage list
+    router.navigate("/");
+  };
+
   return (
     <View style={styles.container}>
+      {/*TODO? make this header in to a component*/}
       <View style={styles.pageHeader}>
         <Pressable onPress={() => router.back()} style={styles.headerButton}>
           <Ionicons name="chevron-back" size={20} color="#2f80ed" />
@@ -196,8 +217,13 @@ export default function ScorePage() {
         </Pressable>
       </View>
 
-      <MatchCard liveSet={liveSet} sets={sets} />
-      <ScoreDisplay gameData={liveGame} onPress={addPoint}></ScoreDisplay>
+      <MatchCard liveSet={liveSet} sets={sets} team1={team1} team2={team2} />
+      <ScoreDisplay
+        team1={team1}
+        team2={team2}
+        gameData={liveGame}
+        onPress={addPoint}
+      ></ScoreDisplay>
       <View style={styles.bottomContainer}>
         <Pressable style={styles.resetButton} onPress={resetMatch}>
           <Text style={styles.resetText}>FINISH</Text>

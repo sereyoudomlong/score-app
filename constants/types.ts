@@ -5,6 +5,7 @@ export type PlayerData = {
 
 export type TeamData = {
   id?: string;
+  name: string;
   players: PlayerData[];
 };
 

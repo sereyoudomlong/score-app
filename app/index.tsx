@@ -15,7 +15,7 @@ export default function Homepage() {
       <Text style={styles.placeholderText}>Select a tab to get started!</Text>
       <TouchableOpacity
         style={styles.floatingButton}
-        onPress={() => router.navigate("/scorepage")}
+        onPress={() => router.navigate("/match-setup")}
       >
         <Text style={styles.buttonText}>+</Text>
       </TouchableOpacity>

@@ -11,10 +11,14 @@ export default function RootLayout() {
       <Stack>
         <Stack.Screen
           name="index"
-          options={{ title: "Match History", headerBackVisible: false }}
+          options={{
+            title: "Match History",
+            headerBackVisible: false,
+          }}
         />
+        <Stack.Screen name="match-setup" options={{ headerShown: false }} />
         <Stack.Screen
-          name="scorepage"
+          name="live-match"
           options={{ headerShown: false }} // Hides the default header for a cleaner look on the score page
         />
         <Stack.Screen name="+not-found" />

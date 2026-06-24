@@ -1,15 +1,22 @@
-import { GameData, scoreMap } from "@/constants/types";
+import { GameData, scoreMap, TeamData } from "@/constants/types";
 import { LinearGradient } from "expo-linear-gradient";
 import { Pressable, StyleSheet, Text, View } from "react-native";
 
 type teamID = "team1" | "team2";
 
 interface ScoreDisplayProps {
+  team1: TeamData;
+  team2: TeamData;
   gameData: GameData;
   onPress: (team: teamID, isDuece: boolean) => void;
 }
 
-export const ScoreDisplay = ({ gameData, onPress }: ScoreDisplayProps) => {
+export const ScoreDisplay = ({
+  team1,
+  team2,
+  gameData,
+  onPress,
+}: ScoreDisplayProps) => {
   const showScore = (team: "team1" | "team2") => {
     // 1. Handle the "Advantage" case first (The Exception)
     if (gameData.isDuece && gameData.adv === team) {
@@ -28,7 +35,7 @@ export const ScoreDisplay = ({ gameData, onPress }: ScoreDisplayProps) => {
         style={styles.playerSection}
         onPress={() => onPress("team1", gameData.isDuece)}
       >
-        <Text style={styles.playerLabel}>PLAYER 1</Text>
+        <Text style={styles.playerLabel}>{team1.name}</Text>
         <Text style={styles.scoreText}>{showScore("team1")}</Text>
       </Pressable>
       <LinearGradient
@@ -41,7 +48,7 @@ export const ScoreDisplay = ({ gameData, onPress }: ScoreDisplayProps) => {
         style={styles.playerSection}
         onPress={() => onPress("team2", gameData.isDuece)}
       >
-        <Text style={styles.playerLabel}>PLAYER 2</Text>
+        <Text style={styles.playerLabel}>{team2.name}</Text>
         <Text style={styles.scoreText}>{showScore("team2")}</Text>
       </Pressable>
     </View>

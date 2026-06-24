@@ -1,5 +1,4 @@
-import { SetData } from "@/constants/types";
-import { useState } from "react";
+import { SetData, TeamData } from "@/constants/types";
 import { StyleSheet, Text, View } from "react-native";
 
 /**
@@ -14,14 +13,16 @@ import { StyleSheet, Text, View } from "react-native";
 interface MatchCardProps {
   liveSet: SetData;
   sets: SetData[] | undefined;
+  team1: TeamData;
+  team2: TeamData;
 }
 
-export default function MatchCard({ liveSet, sets }: MatchCardProps) {
-  const [team1, setTeam1] = useState({
-    name: "John",
-    scores: [1, 2, 3],
-  });
-
+export default function MatchCard({
+  liveSet,
+  sets,
+  team1,
+  team2,
+}: MatchCardProps) {
   return (
     <View style={styles.container}>
       <View style={styles.cardHeader}>
@@ -31,8 +32,7 @@ export default function MatchCard({ liveSet, sets }: MatchCardProps) {
       <View style={styles.cardBody}>
         <View style={styles.playerRow}>
           <View style={styles.playerInfo}>
-            {/* todo: Replace with actual player name */}
-            <Text style={styles.playerName}>John</Text>
+            <Text style={styles.playerName}>{team1.name}</Text>
           </View>
           <View style={styles.scoreContainer}>
             {sets?.map((set, index) => (
@@ -45,8 +45,7 @@ export default function MatchCard({ liveSet, sets }: MatchCardProps) {
         </View>
         <View style={styles.playerRow}>
           <View style={styles.playerInfo}>
-            {/* todo: Replace with actual player name */}
-            <Text style={styles.playerName}>Player 2</Text>
+            <Text style={styles.playerName}>{team2.name}</Text>
           </View>
           <View style={styles.scoreContainer}>
             {sets?.map((set, index) => (
