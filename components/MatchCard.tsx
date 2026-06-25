@@ -77,7 +77,7 @@ const styles = StyleSheet.create({
     elevation: 3,
   },
   cardHeader: {
-    backgroundColor: "#1d7008",
+    backgroundColor: "#34C759",
     flexDirection: "row",
     justifyContent: "space-between",
     alignItems: "baseline",

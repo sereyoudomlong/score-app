@@ -17,6 +17,9 @@ export default function MatchSetupScreen() {
   const [t2p1, setT2p1] = useState("");
   const [t2p2, setT2p2] = useState("");
 
+  const [servingTeam, setServingTeam] = useState<1 | 2>(1);
+  const [setsNum, setSetsNum] = useState<1 | 3 | 5>(1);
+
   return (
     <View style={styles.container}>
       {/* HEADER */}
@@ -77,34 +80,100 @@ export default function MatchSetupScreen() {
       <Text style={styles.label}>Team 1</Text>
       <TextInput
         style={styles.input}
-        placeholder="Player 1 Name"
+        placeholder="Default: Player 1"
         value={t1p1}
         onChangeText={setT1p1}
       />
       {isDoubles && (
         <TextInput
           style={styles.input}
-          placeholder="Player 2 Name"
+          placeholder="Default: Player 3"
           value={t1p2}
           onChangeText={setT1p2}
         />
       )}
 
       <Text style={styles.label}>Team 2</Text>
+
       <TextInput
         style={styles.input}
-        placeholder="Player 1 Name"
+        placeholder="Default: Player 2"
         value={t2p1}
         onChangeText={setT2p1}
       />
       {isDoubles && (
         <TextInput
           style={styles.input}
-          placeholder="Player 2 Name"
+          placeholder="Default: Player 4"
           value={t2p2}
           onChangeText={setT2p2}
         />
       )}
+
+      <Text style={styles.label}>Who Serves First?</Text>
+      <View style={styles.radioGroup}>
+        {/* Option 1: Team 1 */}
+        <TouchableOpacity
+          style={styles.radioRow}
+          onPress={() => setServingTeam(1)}
+          activeOpacity={0.8}
+        >
+          <View style={styles.radioOuterCircle}>
+            {servingTeam === 1 && <View style={styles.radioInnerDot} />}
+          </View>
+          <Text style={styles.radioLabel}>Team 1</Text>
+        </TouchableOpacity>
+
+        {/* Option 2: Team 2 */}
+        <TouchableOpacity
+          style={styles.radioRow}
+          onPress={() => setServingTeam(2)}
+          activeOpacity={0.8}
+        >
+          <View style={styles.radioOuterCircle}>
+            {servingTeam === 2 && <View style={styles.radioInnerDot} />}
+          </View>
+          <Text style={styles.radioLabel}>Team 2</Text>
+        </TouchableOpacity>
+      </View>
+
+      <Text style={styles.label}>Sets</Text>
+      <View style={styles.radioGroup}>
+        {/* Option 1: Team 1 */}
+        <TouchableOpacity
+          style={styles.radioRow}
+          onPress={() => setSetsNum(1)}
+          activeOpacity={0.8}
+        >
+          <View style={styles.radioOuterCircle}>
+            {setsNum === 1 && <View style={styles.radioInnerDot} />}
+          </View>
+          <Text style={styles.radioLabel}>1 Set</Text>
+        </TouchableOpacity>
+
+        {/* Option 2: Team 2 */}
+        <TouchableOpacity
+          style={styles.radioRow}
+          onPress={() => setSetsNum(3)}
+          activeOpacity={0.8}
+        >
+          <View style={styles.radioOuterCircle}>
+            {setsNum === 3 && <View style={styles.radioInnerDot} />}
+          </View>
+          <Text style={styles.radioLabel}>3 Sets</Text>
+        </TouchableOpacity>
+
+        <TouchableOpacity
+          style={styles.radioRow}
+          onPress={() => setSetsNum(5)}
+          activeOpacity={0.8}
+        >
+          <View style={styles.radioOuterCircle}>
+            {setsNum === 5 && <View style={styles.radioInnerDot} />}
+          </View>
+          <Text style={styles.radioLabel}>5 Sets</Text>
+        </TouchableOpacity>
+      </View>
 
       <View style={styles.bottomContainer}>
         <Pressable
@@ -183,8 +252,8 @@ const styles = StyleSheet.create({
   toggleRow: {
     flexDirection: "row",
     backgroundColor: "#F2F2F7", // Light grey background container
-    borderRadius: 9,
-    padding: 3, // Creates a slight inset border effect around the buttons
+    borderRadius: 20,
+    height: 40,
     marginLeft: 10,
     marginRight: 10,
   },
@@ -193,11 +262,11 @@ const styles = StyleSheet.create({
     paddingVertical: 10,
     alignItems: "center",
     justifyContent: "center",
-    borderRadius: 7,
+    borderRadius: 20,
+    height: 40,
   },
   activeButton: {
-    backgroundColor: "#fff", // Active button pops out with a white card background
-    // Subtle shadow to make the active button look elevated
+    backgroundColor: "#007AFF",
     shadowColor: "#000",
     shadowOffset: { width: 0, height: 1 },
     shadowOpacity: 0.15,
@@ -210,7 +279,7 @@ const styles = StyleSheet.create({
     color: "#8E8E93", // Inactive text color
   },
   activeToggleText: {
-    color: "#000", // Active text color
+    color: "#ffffff", // Active text color
     fontWeight: "600",
   },
   input: {
@@ -221,5 +290,39 @@ const styles = StyleSheet.create({
     borderRadius: 8,
     marginBottom: 12,
     fontSize: 16,
+  },
+  radioGroup: {
+    flexDirection: "row",
+    justifyContent: "flex-start",
+    width: "100%",
+    paddingHorizontal: 10,
+    gap: 24,
+    marginVertical: 10,
+  },
+  radioRow: {
+    flexDirection: "row",
+    alignItems: "center",
+    paddingVertical: 6,
+  },
+  radioOuterCircle: {
+    width: 20,
+    height: 20,
+    borderRadius: 10, // Perfect circle (half of width/height)
+    borderWidth: 2,
+    borderColor: "#007AFF",
+    justifyContent: "center",
+    alignItems: "center",
+    marginRight: 8,
+  },
+  radioInnerDot: {
+    width: 10,
+    height: 10,
+    borderRadius: 5, // Perfect inner dot circle
+    backgroundColor: "#007AFF", // Fills solid when active
+  },
+  radioLabel: {
+    fontSize: 15,
+    fontWeight: "500",
+    color: "#333",
   },
 });
