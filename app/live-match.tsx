@@ -205,7 +205,7 @@ export default function LiveMatchScreen() {
       {/*TODO? make this header in to a component*/}
       <View style={styles.pageHeader}>
         <Pressable onPress={() => router.back()} style={styles.headerButton}>
-          <Ionicons name="chevron-back" size={20} color="#2f80ed" />
+          <Ionicons name="chevron-back" size={20} color="#000" />
           <Text style={styles.backText}>Back</Text>
         </Pressable>
         <Text style={styles.headerTitle}>Scoreboard</Text>
@@ -213,7 +213,7 @@ export default function LiveMatchScreen() {
           onPress={() => {}}
           style={[styles.headerButton, { justifyContent: "flex-end" }]} // Overrides the default space-between to align this button to the right
         >
-          <Ionicons name="arrow-undo-outline" size={24} color="#2f80ed" />
+          <Ionicons name="arrow-undo-outline" size={24} color="#000" />
         </Pressable>
       </View>
 
@@ -260,7 +260,7 @@ const styles = StyleSheet.create({
   },
   backText: {
     fontSize: 17,
-    color: "#2f80ed",
+    color: "#000",
     marginLeft: 2,
   },
   headerTitle: {

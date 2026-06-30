@@ -25,7 +25,7 @@ export default function MatchSetupScreen() {
       {/* HEADER */}
       <View style={styles.pageHeader}>
         <Pressable onPress={() => router.back()} style={styles.headerButton}>
-          <Ionicons name="chevron-back" size={20} color="#2f80ed" />
+          <Ionicons name="chevron-back" size={20} color="#000" />
           <Text style={styles.backText}>Back</Text>
         </Pressable>
         <Text style={styles.headerTitle}>Match Setup</Text>
@@ -35,9 +35,7 @@ export default function MatchSetupScreen() {
             styles.headerButton,
             { justifyContent: "flex-end", opacity: 0 },
           ]}
-        >
-          <Ionicons name="arrow-undo-outline" size={24} color="#2f80ed" />
-        </Pressable>
+        ></Pressable>
       </View>
 
       {/* Match Type Toggle */}
@@ -175,14 +173,13 @@ export default function MatchSetupScreen() {
         </TouchableOpacity>
       </View>
 
-      <View style={styles.bottomContainer}>
-        <Pressable
-          style={styles.resetButton}
-          onPress={() => router.replace("/live-match")}
-        >
-          <Text style={styles.resetText}>FINISH</Text>
-        </Pressable>
-      </View>
+      <TouchableOpacity
+        style={styles.floatingPill}
+        onPress={() => router.replace("/live-match")}
+        activeOpacity={0.85}
+      >
+        <Text style={styles.floatingPillText}>START MATCH →</Text>
+      </TouchableOpacity>
     </View>
   );
 }
@@ -214,7 +211,7 @@ const styles = StyleSheet.create({
   },
   backText: {
     fontSize: 17,
-    color: "#2f80ed",
+    color: "#000",
     marginLeft: 2,
   },
   headerTitle: {
@@ -266,7 +263,7 @@ const styles = StyleSheet.create({
     height: 40,
   },
   activeButton: {
-    backgroundColor: "#007AFF",
+    backgroundColor: "#28A745",
     shadowColor: "#000",
     shadowOffset: { width: 0, height: 1 },
     shadowOpacity: 0.15,
@@ -309,7 +306,7 @@ const styles = StyleSheet.create({
     height: 20,
     borderRadius: 10, // Perfect circle (half of width/height)
     borderWidth: 2,
-    borderColor: "#007AFF",
+    borderColor: "#28A745",
     justifyContent: "center",
     alignItems: "center",
     marginRight: 8,
@@ -318,11 +315,39 @@ const styles = StyleSheet.create({
     width: 10,
     height: 10,
     borderRadius: 5, // Perfect inner dot circle
-    backgroundColor: "#007AFF", // Fills solid when active
+    backgroundColor: "#28A745", // Fills solid when active
   },
   radioLabel: {
     fontSize: 15,
     fontWeight: "500",
     color: "#333",
+  },
+
+  floatingPill: {
+    position: "absolute",
+    bottom: 40, // Floats comfortably above the bottom edge
+    alignSelf: "center", // Locks it perfectly in the middle
+    width: "50%", // Wide enough to be a primary action, but leaves screen edges visible
+    height: 60,
+    backgroundColor: "#28A745", // A sleek, ultra-dark gray/black (Very Apple-esque)
+    borderRadius: 30, // Perfect pill shape (half of height 60)
+    flexDirection: "row", // Aligns text and icon side-by-side
+    alignItems: "center",
+    justifyContent: "space-between",
+    paddingLeft: 24, // Pushes text in from the left
+    paddingRight: 6, // Tight padding on the right to hug the inner circle
+
+    // The Premium Float Shadow
+    shadowColor: "#000",
+    shadowOffset: { width: 0, height: 8 },
+    shadowOpacity: 0.25,
+    shadowRadius: 10,
+    elevation: 8,
+  },
+  floatingPillText: {
+    color: "#FFFFFF",
+    fontSize: 16,
+    fontWeight: "800", // Heavy font weight makes it look like a sports app
+    letterSpacing: 1.5, // Spacing out the letters adds that modern, cinematic feel
   },
 });
