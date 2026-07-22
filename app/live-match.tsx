@@ -8,6 +8,7 @@ import {
   TeamData,
 } from "@/constants/types";
 import Ionicons from "@expo/vector-icons/Ionicons";
+import AsyncStorage from "@react-native-async-storage/async-storage";
 import { router, useNavigation } from "expo-router";
 import { useEffect, useState } from "react";
 import { Pressable, StyleSheet, Text, Vibration, View } from "react-native";
@@ -30,8 +31,9 @@ export default function LiveMatchScreen() {
   const [liveGame, setLiveGame] = useState<GameData>({
     team1Points: 0,
     team2Points: 0,
-    isDuece: false,
+    isDeuce: false,
     adv: null,
+    gameWon: null,
   });
 
   const [liveSet, setLiveSet] = useState<SetData>({
@@ -49,10 +51,28 @@ export default function LiveMatchScreen() {
     version: 0,
   });
 
+  const [matchHistoryStack, setMatchHistoryStack] = useState<MatchData[]>([]);
+
   //DELETE THIS WHEN DONE
   useEffect(() => {
     printData();
   }, [liveGame]);
+
+  const saveMatch = async (match: MatchData) => {
+    try {
+      // 1. Get existing history
+      const existingHistory = await AsyncStorage.getItem("match_history");
+      const history = existingHistory ? JSON.parse(existingHistory) : [];
+
+      // 2. Append new match
+      const newHistory = [...history, match];
+
+      // 3. Save back to storage
+      await AsyncStorage.setItem("match_history", JSON.stringify(newHistory));
+    } catch (e) {
+      console.error("Failed to save", e);
+    }
+  };
 
   //DELETE THIS WHEN DONE
   const printData = () => {
@@ -73,38 +93,36 @@ export default function LiveMatchScreen() {
     Vibration.vibrate(50);
 
     if (isDeuce) {
+      console.log("lsadjfkadsjklfkdsajflasdjflasdjlfjlasdjfldaslf");
       deuceScore(team);
       return;
     }
 
-    const p1Next =
-      team === "team1" ? liveGame.team1Points + 1 : liveGame.team1Points;
-    const p2Next =
-      team === "team2" ? liveGame.team2Points + 1 : liveGame.team2Points;
+    setLiveGame((prev) => {
+      // 1. Calculate new points
+      const nextP1 = team === "team1" ? prev.team1Points + 1 : prev.team1Points;
+      const nextP2 = team === "team2" ? prev.team2Points + 1 : prev.team2Points;
 
-    // check for deuce
-    if (p1Next === 3 && p2Next === 3) {
-      setLiveGame((prev) => ({
-        ...prev,
-        team1Points: 3,
-        team2Points: 3,
-        isDuece: true,
-      }));
-      return;
-    }
+      let newState = { ...prev, team1Points: nextP1, team2Points: nextP2 };
 
-    // Check for Win
-    if (p1Next === 4) {
-      winGame("team1");
-    } else if (p2Next === 4) {
-      winGame("team2");
-    } else {
-      setLiveGame((prev) => ({
-        ...prev,
-        team1Points: team === "team1" ? p1Next : prev.team1Points,
-        team2Points: team === "team2" ? p2Next : prev.team2Points,
-      }));
-    }
+      // 2. Check for Win (The "End State" check)
+      if (nextP1 === 4 || nextP2 === 4) {
+        winGame(nextP1 === 4 ? "team1" : "team2");
+        return prev;
+      }
+
+      // 3. Check for Deuce transition
+      if (nextP1 === 3 && nextP2 === 3) {
+        newState = { ...newState, isDeuce: true };
+      }
+
+      // 4. update Match to history
+      const updatedMatch = { ...match, liveGame: newState };
+      saveMatch(updatedMatch);
+
+      // 5. set the newState update
+      return newState;
+    });
   };
 
   // Scoring logic for deuce
@@ -141,7 +159,13 @@ export default function LiveMatchScreen() {
       team1GamesWon: nextTeam1Games,
       team2GamesWon: nextTeam2Games,
     }));
-    resetGame();
+
+    setLiveGame((prev) => ({
+      ...prev,
+      gameWon: team,
+    }));
+
+    setTimeout(() => resetGame(), 1000);
 
     // Check for Set Win (First to 6 games with at least 2 games difference)
     if (
@@ -165,12 +189,29 @@ export default function LiveMatchScreen() {
     resetSet();
   };
 
+  const undo = async () => {
+    const existingHistory = await AsyncStorage.getItem("match_history");
+    const history = existingHistory ? JSON.parse(existingHistory) : [];
+    console.log("=====================================");
+    console.log(history);
+  };
+
+  const wipeAllData = async () => {
+    try {
+      await AsyncStorage.clear();
+      console.log("All storage cleared!");
+    } catch (e) {
+      console.error("Failed to clear all storage:", e);
+    }
+  };
+
   const resetGame = () => {
     setLiveGame({
       team1Points: 0,
       team2Points: 0,
-      isDuece: false,
+      isDeuce: false,
       adv: null,
+      gameWon: null,
     });
   };
 
@@ -182,6 +223,7 @@ export default function LiveMatchScreen() {
   };
 
   const resetMatch = () => {
+    wipeAllData();
     resetGame();
     resetSet();
     setSets([]);
@@ -210,7 +252,7 @@ export default function LiveMatchScreen() {
         </Pressable>
         <Text style={styles.headerTitle}>Scoreboard</Text>
         <Pressable
-          onPress={() => {}}
+          onPress={undo}
           style={[styles.headerButton, { justifyContent: "flex-end" }]} // Overrides the default space-between to align this button to the right
         >
           <Ionicons name="arrow-undo-outline" size={24} color="#000" />

@@ -13,8 +13,9 @@ export type GameData = {
   gameID?: string;
   team1Points: number;
   team2Points: number;
-  isDuece: boolean;
+  isDeuce: boolean;
   adv?: "team1" | "team2" | null;
+  gameWon?: "team1" | "team2" | null;
 };
 
 export type SetData = {

@@ -229,15 +229,6 @@ const styles = StyleSheet.create({
     flexDirection: "row",
     justifyContent: "center",
   },
-  resetButton: {
-    marginBottom: 40,
-    padding: 20,
-  },
-  resetText: {
-    color: "#ff4444",
-    fontSize: 14,
-    fontWeight: "bold",
-  },
   label: {
     fontSize: 16,
     fontWeight: "600",
@@ -294,7 +285,6 @@ const styles = StyleSheet.create({
     width: "100%",
     paddingHorizontal: 10,
     gap: 24,
-    marginVertical: 10,
   },
   radioRow: {
     flexDirection: "row",

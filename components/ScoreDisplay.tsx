@@ -8,7 +8,7 @@ interface ScoreDisplayProps {
   team1: TeamData;
   team2: TeamData;
   gameData: GameData;
-  onPress: (team: teamID, isDuece: boolean) => void;
+  onPress: (team: teamID, isDeuce: boolean) => void;
 }
 
 export const ScoreDisplay = ({
@@ -19,7 +19,10 @@ export const ScoreDisplay = ({
 }: ScoreDisplayProps) => {
   const showScore = (team: "team1" | "team2") => {
     // 1. Handle the "Advantage" case first (The Exception)
-    if (gameData.isDuece && gameData.adv === team) {
+    if (gameData.gameWon === team) {
+      return "Game";
+    }
+    if (gameData.isDeuce && gameData.adv === team) {
       return "AD";
     }
 
@@ -33,7 +36,8 @@ export const ScoreDisplay = ({
     <View style={styles.scoreBoard}>
       <Pressable
         style={styles.playerSection}
-        onPress={() => onPress("team1", gameData.isDuece)}
+        onPress={() => onPress("team1", gameData.isDeuce)}
+        disabled={!!gameData.gameWon}
       >
         <Text style={styles.playerLabel}>{team1.name}</Text>
         <Text style={styles.scoreText}>{showScore("team1")}</Text>
@@ -46,7 +50,8 @@ export const ScoreDisplay = ({
       />
       <Pressable
         style={styles.playerSection}
-        onPress={() => onPress("team2", gameData.isDuece)}
+        onPress={() => onPress("team2", gameData.isDeuce)}
+        disabled={!!gameData.gameWon}
       >
         <Text style={styles.playerLabel}>{team2.name}</Text>
         <Text style={styles.scoreText}>{showScore("team2")}</Text>
