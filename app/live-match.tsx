@@ -1,17 +1,11 @@
 import MatchCard from "@/components/MatchCard";
 import { ScoreDisplay } from "@/components/ScoreDisplay";
-import {
-  GameData,
-  MatchData,
-  PlayerData,
-  SetData,
-  TeamData,
-} from "@/constants/types";
+import { PlayerData, TeamData } from "@/constants/types";
+import { useMatch } from "@/hooks/useMatch";
 import Ionicons from "@expo/vector-icons/Ionicons";
-import AsyncStorage from "@react-native-async-storage/async-storage";
 import { router, useNavigation } from "expo-router";
 import { useEffect, useState } from "react";
-import { Pressable, StyleSheet, Text, Vibration, View } from "react-native";
+import { Pressable, StyleSheet, Text, View } from "react-native";
 // import * as Watch from "react-native-watch-connectivity";
 
 export default function LiveMatchScreen() {
@@ -20,59 +14,23 @@ export default function LiveMatchScreen() {
   const [player2, setPlayer2] = useState<PlayerData>({ name: "Jake" });
   const [player3, setPlayer3] = useState<PlayerData>({ name: "Jane" });
   const [player4, setPlayer4] = useState<PlayerData>({ name: "Jill" });
-  const [team1, setTeam1] = useState<TeamData>({
+
+  const team1: TeamData = {
     players: [player1, player3],
     name: `${player1.name} & ${player3.name}`,
-  });
-  const [team2, setTeam2] = useState<TeamData>({
+  };
+
+  const team2: TeamData = {
     players: [player2, player4],
     name: `${player2.name} & ${player4.name}`,
-  });
-  const [liveGame, setLiveGame] = useState<GameData>({
-    team1Points: 0,
-    team2Points: 0,
-    isDeuce: false,
-    adv: null,
-    gameWon: null,
-  });
+  };
 
-  const [liveSet, setLiveSet] = useState<SetData>({
-    team1GamesWon: 0,
-    team2GamesWon: 0,
-  });
-
-  const [sets, setSets] = useState<SetData[]>();
-
-  const [match, setMatch] = useState<MatchData>({
-    team1,
-    team2,
-    liveGame,
-    sets,
-    version: 0,
-  });
-
-  const [matchHistoryStack, setMatchHistoryStack] = useState<MatchData[]>([]);
+  const { match, scorePoint } = useMatch([team1, team2]);
 
   //DELETE THIS WHEN DONE
   useEffect(() => {
     printData();
-  }, [liveGame]);
-
-  const saveMatch = async (match: MatchData) => {
-    try {
-      // 1. Get existing history
-      const existingHistory = await AsyncStorage.getItem("match_history");
-      const history = existingHistory ? JSON.parse(existingHistory) : [];
-
-      // 2. Append new match
-      const newHistory = [...history, match];
-
-      // 3. Save back to storage
-      await AsyncStorage.setItem("match_history", JSON.stringify(newHistory));
-    } catch (e) {
-      console.error("Failed to save", e);
-    }
-  };
+  }, [match.liveGame]);
 
   //DELETE THIS WHEN DONE
   const printData = () => {
@@ -83,152 +41,17 @@ export default function LiveMatchScreen() {
     console.log("Player 2:", player2);
     console.log("Team 1:", team1);
     console.log("Team 2:", team2);
-    console.log("Live Game:", liveGame);
-    console.log("Live Set:", liveSet);
-    console.log("Sets:", sets);
+    console.log("Live Game:", match.liveGame);
+    console.log("Live Set:", match.sets[match.currentSetIndex]);
+    console.log("Sets:", match.sets);
     console.log("Match:", match);
   };
 
-  const addPoint = (team: "team1" | "team2", isDeuce: boolean) => {
-    Vibration.vibrate(50);
+  const resetGame = () => {};
 
-    if (isDeuce) {
-      console.log("lsadjfkadsjklfkdsajflasdjflasdjlfjlasdjfldaslf");
-      deuceScore(team);
-      return;
-    }
+  const resetSet = () => {};
 
-    setLiveGame((prev) => {
-      // 1. Calculate new points
-      const nextP1 = team === "team1" ? prev.team1Points + 1 : prev.team1Points;
-      const nextP2 = team === "team2" ? prev.team2Points + 1 : prev.team2Points;
-
-      let newState = { ...prev, team1Points: nextP1, team2Points: nextP2 };
-
-      // 2. Check for Win (The "End State" check)
-      if (nextP1 === 4 || nextP2 === 4) {
-        winGame(nextP1 === 4 ? "team1" : "team2");
-        return prev;
-      }
-
-      // 3. Check for Deuce transition
-      if (nextP1 === 3 && nextP2 === 3) {
-        newState = { ...newState, isDeuce: true };
-      }
-
-      // 4. update Match to history
-      const updatedMatch = { ...match, liveGame: newState };
-      saveMatch(updatedMatch);
-
-      // 5. set the newState update
-      return newState;
-    });
-  };
-
-  // Scoring logic for deuce
-  const deuceScore = (team: "team1" | "team2") => {
-    // find the team and opp to compare
-    const opponent = team === "team1" ? "team2" : "team1";
-
-    // if player have adv win the game
-    if (liveGame.adv === team) {
-      winGame(team);
-      return;
-    } else if (liveGame.adv === opponent) {
-      setLiveGame((prev) => ({
-        ...prev,
-        adv: null,
-      }));
-    } else if (liveGame.adv === null) {
-      setLiveGame((prev) => ({
-        ...prev,
-        adv: team,
-      }));
-    }
-  };
-
-  const winGame = (team: "team1" | "team2") => {
-    // to counteract the async state update of liveGame
-    const nextTeam1Games =
-      team === "team1" ? liveSet.team1GamesWon + 1 : liveSet.team1GamesWon;
-    const nextTeam2Games =
-      team === "team2" ? liveSet.team2GamesWon + 1 : liveSet.team2GamesWon;
-
-    setLiveSet((prev) => ({
-      ...prev,
-      team1GamesWon: nextTeam1Games,
-      team2GamesWon: nextTeam2Games,
-    }));
-
-    setLiveGame((prev) => ({
-      ...prev,
-      gameWon: team,
-    }));
-
-    setTimeout(() => resetGame(), 1000);
-
-    // Check for Set Win (First to 6 games with at least 2 games difference)
-    if (
-      (team === "team1" &&
-        nextTeam1Games >= 6 &&
-        nextTeam1Games - nextTeam2Games >= 2) ||
-      (team === "team2" &&
-        nextTeam2Games >= 6 &&
-        nextTeam2Games - nextTeam1Games >= 2)
-    ) {
-      winSet(nextTeam1Games, nextTeam2Games);
-    }
-  };
-
-  const winSet = (t1Games: number, t2Games: number) => {
-    const completedSet: SetData = {
-      team1GamesWon: t1Games,
-      team2GamesWon: t2Games,
-    };
-    setSets((prev) => [...(prev || []), completedSet]);
-    resetSet();
-  };
-
-  const undo = async () => {
-    const existingHistory = await AsyncStorage.getItem("match_history");
-    const history = existingHistory ? JSON.parse(existingHistory) : [];
-    console.log("=====================================");
-    console.log(history);
-  };
-
-  const wipeAllData = async () => {
-    try {
-      await AsyncStorage.clear();
-      console.log("All storage cleared!");
-    } catch (e) {
-      console.error("Failed to clear all storage:", e);
-    }
-  };
-
-  const resetGame = () => {
-    setLiveGame({
-      team1Points: 0,
-      team2Points: 0,
-      isDeuce: false,
-      adv: null,
-      gameWon: null,
-    });
-  };
-
-  const resetSet = () => {
-    setLiveSet({
-      team1GamesWon: 0,
-      team2GamesWon: 0,
-    });
-  };
-
-  const resetMatch = () => {
-    wipeAllData();
-    resetGame();
-    resetSet();
-    setSets([]);
-    setMatch({ team1, team2, liveGame, sets, version: 0 });
-  };
+  const resetMatch = () => {};
 
   const navigation = useNavigation();
 
@@ -252,19 +75,24 @@ export default function LiveMatchScreen() {
         </Pressable>
         <Text style={styles.headerTitle}>Scoreboard</Text>
         <Pressable
-          onPress={undo}
+          onPress={() => {}}
           style={[styles.headerButton, { justifyContent: "flex-end" }]} // Overrides the default space-between to align this button to the right
         >
           <Ionicons name="arrow-undo-outline" size={24} color="#000" />
         </Pressable>
       </View>
 
-      <MatchCard liveSet={liveSet} sets={sets} team1={team1} team2={team2} />
+      <MatchCard
+        liveSet={match.sets[match.currentSetIndex]}
+        sets={match.sets}
+        team1={team1}
+        team2={team2}
+      />
       <ScoreDisplay
         team1={team1}
         team2={team2}
-        gameData={liveGame}
-        onPress={addPoint}
+        gameData={match.liveGame}
+        onPress={scorePoint}
       ></ScoreDisplay>
       <View style={styles.bottomContainer}>
         <Pressable style={styles.resetButton} onPress={resetMatch}>

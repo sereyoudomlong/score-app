@@ -40,7 +40,6 @@ export default function MatchCard({
                 {set.team1GamesWon}
               </Text>
             ))}
-            <Text style={styles.scoreText}>{liveSet.team1GamesWon}</Text>
           </View>
         </View>
         <View style={styles.playerRow}>
@@ -53,7 +52,6 @@ export default function MatchCard({
                 {set.team2GamesWon}
               </Text>
             ))}
-            <Text style={styles.scoreText}>{liveSet.team2GamesWon}</Text>
           </View>
         </View>
       </View>

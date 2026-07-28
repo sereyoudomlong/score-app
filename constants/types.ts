@@ -29,8 +29,13 @@ export type MatchData = {
   team1: TeamData;
   team2: TeamData;
   liveGame: GameData;
-  sets: SetData[] | undefined;
+  currentSetIndex: number;
+  sets: SetData[];
   version: number;
 };
+
+export type MatchAction =
+  | { type: "SCORE_POINT"; team: "team1" | "team2" }
+  | { type: "RESET_GAME" };
 
 export const scoreMap = ["0", "15", "30", "40", "Game"];
