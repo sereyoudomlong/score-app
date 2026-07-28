@@ -1,5 +1,5 @@
 import { MatchAction, MatchData, TeamData } from "../constants/types";
-import { resetGame } from "./resetLogic";
+import { resetGame, undo } from "./resetLogic";
 import { addPoint } from "./scoringLogic";
 
 export function createInitialMatchData(
@@ -19,6 +19,7 @@ export function createInitialMatchData(
     },
     currentSetIndex: 0,
     sets: [{ team1GamesWon: 0, team2GamesWon: 0 }],
+    history: [],
     version: 0,
   };
 }
@@ -26,10 +27,21 @@ export function createInitialMatchData(
 export function matchReducer(state: MatchData, action: MatchAction): MatchData {
   switch (action.type) {
     case "SCORE_POINT":
-      return addPoint(action.team, state);
+      const snapshot = {
+        liveGame: state.liveGame,
+        sets: state.sets,
+        currentSetIndex: state.currentSetIndex,
+      };
+
+      let newState = addPoint(action.team, state);
+
+      return { ...newState, history: [...state.history, snapshot] };
 
     case "RESET_GAME":
       return resetGame(state);
+
+    case "UNDO":
+      return undo(state);
 
     default:
       return state;

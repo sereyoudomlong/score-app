@@ -25,7 +25,7 @@ export default function LiveMatchScreen() {
     name: `${player2.name} & ${player4.name}`,
   };
 
-  const { match, scorePoint } = useMatch([team1, team2]);
+  const { match, scorePoint, undo } = useMatch([team1, team2]);
 
   //DELETE THIS WHEN DONE
   useEffect(() => {
@@ -75,7 +75,7 @@ export default function LiveMatchScreen() {
         </Pressable>
         <Text style={styles.headerTitle}>Scoreboard</Text>
         <Pressable
-          onPress={() => {}}
+          onPress={undo}
           style={[styles.headerButton, { justifyContent: "flex-end" }]} // Overrides the default space-between to align this button to the right
         >
           <Ionicons name="arrow-undo-outline" size={24} color="#000" />

@@ -23,5 +23,9 @@ export function useMatch(teams: [TeamData, TeamData]) {
     dispatch({ type: "SCORE_POINT", team });
   };
 
-  return { match, scorePoint };
+  const undo = () => {
+    dispatch({ type: "UNDO" });
+  };
+
+  return { match, scorePoint, undo };
 }

@@ -24,6 +24,12 @@ export type SetData = {
   team2GamesWon: number;
 };
 
+export type MatchHistoryData = {
+  liveGame: GameData;
+  sets: SetData[];
+  currentSetIndex: number;
+};
+
 export type MatchData = {
   matchID?: string;
   team1: TeamData;
@@ -31,11 +37,13 @@ export type MatchData = {
   liveGame: GameData;
   currentSetIndex: number;
   sets: SetData[];
+  history: MatchHistoryData[];
   version: number;
 };
 
 export type MatchAction =
   | { type: "SCORE_POINT"; team: "team1" | "team2" }
-  | { type: "RESET_GAME" };
+  | { type: "RESET_GAME" }
+  | { type: "UNDO" };
 
 export const scoreMap = ["0", "15", "30", "40", "Game"];
