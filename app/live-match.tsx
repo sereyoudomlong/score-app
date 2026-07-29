@@ -3,29 +3,50 @@ import { ScoreDisplay } from "@/components/ScoreDisplay";
 import { PlayerData, TeamData } from "@/constants/types";
 import { useMatch } from "@/hooks/useMatch";
 import Ionicons from "@expo/vector-icons/Ionicons";
-import { router, useNavigation } from "expo-router";
+import { router, useLocalSearchParams, useNavigation } from "expo-router";
 import { useEffect, useState } from "react";
 import { Pressable, StyleSheet, Text, View } from "react-native";
 // import * as Watch from "react-native-watch-connectivity";
 
 export default function LiveMatchScreen() {
-  // Mock Data (Replace with actual data fetching logic)
-  const [player1, setPlayer1] = useState<PlayerData>({ name: "John" });
-  const [player2, setPlayer2] = useState<PlayerData>({ name: "Jake" });
-  const [player3, setPlayer3] = useState<PlayerData>({ name: "Jane" });
-  const [player4, setPlayer4] = useState<PlayerData>({ name: "Jill" });
+  const { isDouble, t1p1, t1p2, t2p1, t2p2, servingTeam, setsNum } =
+    useLocalSearchParams<{
+      isDouble: string;
+      t1p1: string;
+      t1p2?: string;
+      t2p1: string;
+      t2p2?: string;
+      servingTeam: string;
+      setsNum: string;
+    }>();
+
+  const [team1Players, setTeam1Players] = useState<PlayerData[]>(() => {
+    const players = [{ name: t1p1 }];
+    if (t1p2) players.push({ name: t1p2 });
+    return players;
+  });
+
+  const [team2Players, setTeam2Players] = useState<PlayerData[]>(() => {
+    const players = [{ name: t2p1 }];
+    if (t2p2) players.push({ name: t2p2 });
+    return players;
+  });
 
   const team1: TeamData = {
-    players: [player1, player3],
-    name: `${player1.name} & ${player3.name}`,
+    players: team1Players,
+    name: team1Players.length > 1 ? `${t1p1} & ${t1p2}` : t1p1,
   };
 
   const team2: TeamData = {
-    players: [player2, player4],
-    name: `${player2.name} & ${player4.name}`,
+    players: team2Players,
+    name: team2Players.length > 1 ? `${t2p1} & ${t2p2}` : t2p1,
   };
 
-  const { match, scorePoint, undo } = useMatch([team1, team2]);
+  const { match, scorePoint, undo } = useMatch(
+    [team1, team2],
+    Number(setsNum),
+    isDouble === "true" ? true : false,
+  );
 
   //DELETE THIS WHEN DONE
   useEffect(() => {
@@ -37,8 +58,6 @@ export default function LiveMatchScreen() {
     console.log(
       "=============================== Current Match Data =============================== ",
     );
-    console.log("Player 1:", player1);
-    console.log("Player 2:", player2);
     console.log("Team 1:", team1);
     console.log("Team 2:", team2);
     console.log("Live Game:", match.liveGame);
@@ -46,10 +65,6 @@ export default function LiveMatchScreen() {
     console.log("Sets:", match.sets);
     console.log("Match:", match);
   };
-
-  const resetGame = () => {};
-
-  const resetSet = () => {};
 
   const resetMatch = () => {};
 
@@ -82,18 +97,8 @@ export default function LiveMatchScreen() {
         </Pressable>
       </View>
 
-      <MatchCard
-        liveSet={match.sets[match.currentSetIndex]}
-        sets={match.sets}
-        team1={team1}
-        team2={team2}
-      />
-      <ScoreDisplay
-        team1={team1}
-        team2={team2}
-        gameData={match.liveGame}
-        onPress={scorePoint}
-      ></ScoreDisplay>
+      <MatchCard match={match} />
+      <ScoreDisplay match={match} onPress={scorePoint}></ScoreDisplay>
       <View style={styles.bottomContainer}>
         <Pressable style={styles.resetButton} onPress={resetMatch}>
           <Text style={styles.resetText}>FINISH</Text>

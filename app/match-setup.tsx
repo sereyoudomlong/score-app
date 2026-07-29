@@ -20,6 +20,32 @@ export default function MatchSetupScreen() {
   const [servingTeam, setServingTeam] = useState<1 | 2>(1);
   const [setsNum, setSetsNum] = useState<1 | 3 | 5>(1);
 
+  const handleStartMatch = () => {
+    router.push({
+      pathname: "/live-match",
+      params: {
+        isDouble: isDoubles ? "true" : "false",
+        t1p1: t1p1.trim() === "" ? "Player 1" : getShortName(t1p1),
+        t2p1: t2p1.trim() === "" ? "Player 2" : getShortName(t2p1),
+
+        ...(isDoubles && {
+          t1p2: t1p2.trim() === "" ? "Player 3" : getShortName(t2p1),
+          t2p2: t2p2.trim() === "" ? "Player 4" : getShortName(t2p2),
+        }),
+        servingTeam: servingTeam,
+        setsNum: setsNum,
+      },
+    });
+  };
+
+  const getShortName = (name: string) => {
+    const parts = name.trim().split(" ");
+    if (parts.length > 1) {
+      return `${parts[0]} ${parts[1][0]}.`; // e.g., "Alexander S."
+    }
+    return name;
+  };
+
   return (
     <View style={styles.container}>
       {/* HEADER */}
@@ -80,6 +106,7 @@ export default function MatchSetupScreen() {
         style={styles.input}
         placeholder="Default: Player 1"
         value={t1p1}
+        maxLength={15}
         onChangeText={setT1p1}
       />
       {isDoubles && (
@@ -87,6 +114,7 @@ export default function MatchSetupScreen() {
           style={styles.input}
           placeholder="Default: Player 3"
           value={t1p2}
+          maxLength={15}
           onChangeText={setT1p2}
         />
       )}
@@ -97,6 +125,7 @@ export default function MatchSetupScreen() {
         style={styles.input}
         placeholder="Default: Player 2"
         value={t2p1}
+        maxLength={15}
         onChangeText={setT2p1}
       />
       {isDoubles && (
@@ -104,6 +133,7 @@ export default function MatchSetupScreen() {
           style={styles.input}
           placeholder="Default: Player 4"
           value={t2p2}
+          maxLength={15}
           onChangeText={setT2p2}
         />
       )}
@@ -175,7 +205,8 @@ export default function MatchSetupScreen() {
 
       <TouchableOpacity
         style={styles.floatingPill}
-        onPress={() => router.replace("/live-match")}
+        // onPress={() => router.replace("/live-match")}
+        onPress={handleStartMatch}
         activeOpacity={0.85}
       >
         <Text style={styles.floatingPillText}>START MATCH →</Text>

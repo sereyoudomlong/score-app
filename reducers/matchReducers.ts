@@ -2,13 +2,19 @@ import { MatchAction, MatchData, TeamData } from "../constants/types";
 import { resetGame, undo } from "./resetLogic";
 import { addPoint } from "./scoringLogic";
 
-export function createInitialMatchData(
-  team: [team1: TeamData, team2: TeamData],
-): MatchData {
+export type MatchInitArgs = {
+  teams: [TeamData, TeamData];
+  bestOf: number;
+  isDouble: boolean;
+};
+
+export function createInitialMatchData(args: MatchInitArgs): MatchData {
   return {
     matchID: undefined,
-    team1: team[0],
-    team2: team[1],
+    team1: args.teams[0],
+    team2: args.teams[1],
+    bestOf: args.bestOf,
+    isDouble: args.isDouble,
     liveGame: {
       gameID: undefined,
       team1Points: 0,
@@ -20,6 +26,7 @@ export function createInitialMatchData(
     currentSetIndex: 0,
     sets: [{ team1GamesWon: 0, team2GamesWon: 0 }],
     history: [],
+    duration: 0,
     version: 0,
   };
 }

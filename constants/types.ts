@@ -34,10 +34,13 @@ export type MatchData = {
   matchID?: string;
   team1: TeamData;
   team2: TeamData;
+  bestOf: number;
+  isDouble: boolean;
   liveGame: GameData;
   currentSetIndex: number;
   sets: SetData[];
   history: MatchHistoryData[];
+  duration: number;
   version: number;
 };
 

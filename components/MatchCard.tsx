@@ -1,4 +1,4 @@
-import { SetData, TeamData } from "@/constants/types";
+import { MatchData } from "@/constants/types";
 import { StyleSheet, Text, View } from "react-native";
 
 /**
@@ -11,31 +11,24 @@ import { StyleSheet, Text, View } from "react-native";
  */
 
 interface MatchCardProps {
-  liveSet: SetData;
-  sets: SetData[] | undefined;
-  team1: TeamData;
-  team2: TeamData;
+  match: MatchData;
 }
 
-export default function MatchCard({
-  liveSet,
-  sets,
-  team1,
-  team2,
-}: MatchCardProps) {
+export default function MatchCard({ match }: MatchCardProps) {
   return (
     <View style={styles.container}>
       <View style={styles.cardHeader}>
-        <Text style={styles.headerLeftText}>18 June, 2026</Text>
-        <Text style={styles.headerRightText}>00:00:00</Text>
+        <Text style={styles.headerLeftText}>
+          {match.isDouble ? "Double" : "Single"} BO{match.bestOf}
+        </Text>
       </View>
       <View style={styles.cardBody}>
         <View style={styles.playerRow}>
           <View style={styles.playerInfo}>
-            <Text style={styles.playerName}>{team1.name}</Text>
+            <Text style={styles.playerName}>{match.team1.name}</Text>
           </View>
           <View style={styles.scoreContainer}>
-            {sets?.map((set, index) => (
+            {match.sets?.map((set, index) => (
               <Text key={index} style={styles.scoreText}>
                 {set.team1GamesWon}
               </Text>
@@ -44,10 +37,10 @@ export default function MatchCard({
         </View>
         <View style={styles.playerRow}>
           <View style={styles.playerInfo}>
-            <Text style={styles.playerName}>{team2.name}</Text>
+            <Text style={styles.playerName}>{match.team2.name}</Text>
           </View>
           <View style={styles.scoreContainer}>
-            {sets?.map((set, index) => (
+            {match.sets?.map((set, index) => (
               <Text key={index} style={styles.scoreText}>
                 {set.team2GamesWon}
               </Text>
@@ -82,7 +75,7 @@ const styles = StyleSheet.create({
     borderTopLeftRadius: 10,
     borderTopRightRadius: 10,
     paddingVertical: 10,
-    paddingHorizontal: 16,
+    paddingHorizontal: 10,
     height: 45,
   },
   headerLeftText: {
@@ -111,7 +104,7 @@ const styles = StyleSheet.create({
     gap: 12,
   },
   playerName: {
-    fontSize: 16,
+    fontSize: 14,
     fontWeight: "500",
     color: "#333333",
   },

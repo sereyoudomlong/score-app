@@ -2,10 +2,14 @@ import { TeamData } from "@/constants/types";
 import { createInitialMatchData, matchReducer } from "@/reducers/matchReducers";
 import { useEffect, useReducer } from "react";
 
-export function useMatch(teams: [TeamData, TeamData]) {
+export function useMatch(
+  teams: [TeamData, TeamData],
+  bestOf: number,
+  isDouble: boolean,
+) {
   const [match, dispatch] = useReducer(
     matchReducer,
-    teams,
+    { teams, bestOf, isDouble },
     createInitialMatchData,
   );
 
