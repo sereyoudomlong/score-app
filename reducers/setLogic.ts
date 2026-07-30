@@ -1,4 +1,4 @@
-import { MatchData } from "@/constants/types";
+import { MatchData, SetData } from "@/constants/types";
 
 export const winGame = (
   team: "team1" | "team2",
@@ -41,15 +41,34 @@ export const winGame = (
       nextTeam2Games >= 6 &&
       nextTeam2Games - nextTeam1Games >= 2)
   ) {
-    return winSet(newState);
+    return winSet(newState, team);
   }
 
   console.log(newState);
   return newState;
 };
 
-const winSet = (state: MatchData): MatchData => {
+const winSet = (state: MatchData, team: "team1" | "team2"): MatchData => {
   let newState = { ...state };
+
+  //update the current set to add the winner to it
+  let updatedSet = [...newState.sets];
+  updatedSet[newState.currentSetIndex] = {
+    ...updatedSet[newState.currentSetIndex],
+    setWinner: team,
+  };
+
+  newState = {
+    ...newState,
+    sets: updatedSet,
+  };
+
+  // check if user have played enough set to determine the winner
+  let winner = checkMatchWinner(newState.sets, newState.bestOf);
+
+  if (winner !== null) {
+    return winMatch(newState, winner);
+  }
 
   //update the set list to add another set and increase the set index by 1
   newState = {
@@ -57,5 +76,36 @@ const winSet = (state: MatchData): MatchData => {
     sets: [...newState.sets, { team1GamesWon: 0, team2GamesWon: 0 }],
     currentSetIndex: newState.currentSetIndex + 1,
   };
+
+  return newState;
+};
+
+const checkMatchWinner = (
+  sets: SetData[],
+  bestOf: number,
+): "team1" | "team2" | null => {
+  const setsNeedToWin = Math.ceil(bestOf / 2);
+
+  let team1SetsWon = 0;
+  let team2SetsWon = 0;
+
+  for (let i of sets) {
+    if (i.setWinner === "team1") team1SetsWon++;
+    if (i.setWinner === "team2") team2SetsWon++;
+  }
+
+  if (team1SetsWon >= setsNeedToWin) return "team1";
+  if (team2SetsWon >= setsNeedToWin) return "team2";
+
+  return null;
+};
+
+const winMatch = (state: MatchData, team: "team1" | "team2"): MatchData => {
+  let newState = { ...state };
+  newState = {
+    ...newState,
+    matchWinner: team === "team1" ? newState.team1 : newState.team2,
+  };
+
   return newState;
 };

@@ -22,6 +22,7 @@ export type SetData = {
   setID?: string;
   team1GamesWon: number;
   team2GamesWon: number;
+  setWinner?: "team1" | "team2";
 };
 
 export type MatchHistoryData = {
@@ -41,6 +42,7 @@ export type MatchData = {
   sets: SetData[];
   history: MatchHistoryData[];
   duration: number;
+  matchWinner?: TeamData;
   version: number;
 };
 
