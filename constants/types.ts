@@ -42,13 +42,16 @@ export type MatchData = {
   sets: SetData[];
   history: MatchHistoryData[];
   duration: number;
-  matchWinner?: TeamData;
+  servingTeam: "team1" | "team2";
+  matchWinner?: TeamData | null;
+  isTiebreaker: boolean;
   version: number;
 };
 
 export type MatchAction =
   | { type: "SCORE_POINT"; team: "team1" | "team2" }
   | { type: "RESET_GAME" }
-  | { type: "UNDO" };
+  | { type: "UNDO" }
+  | { type: "RESET_MATCH" };
 
 export const scoreMap = ["0", "15", "30", "40", "Game"];

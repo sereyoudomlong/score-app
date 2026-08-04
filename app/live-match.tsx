@@ -5,7 +5,14 @@ import { useMatch } from "@/hooks/useMatch";
 import Ionicons from "@expo/vector-icons/Ionicons";
 import { router, useLocalSearchParams, useNavigation } from "expo-router";
 import { useEffect, useState } from "react";
-import { Pressable, StyleSheet, Text, View } from "react-native";
+import {
+  Modal,
+  Pressable,
+  StyleSheet,
+  Text,
+  TouchableOpacity,
+  View,
+} from "react-native";
 // import * as Watch from "react-native-watch-connectivity";
 
 export default function LiveMatchScreen() {
@@ -16,7 +23,7 @@ export default function LiveMatchScreen() {
       t1p2?: string;
       t2p1: string;
       t2p2?: string;
-      servingTeam: string;
+      servingTeam: "team1" | "team2";
       setsNum: string;
     }>();
 
@@ -42,10 +49,11 @@ export default function LiveMatchScreen() {
     name: team2Players.length > 1 ? `${t2p1} & ${t2p2}` : t2p1,
   };
 
-  const { match, scorePoint, undo } = useMatch(
+  const { match, scorePoint, undo, resetMatch } = useMatch(
     [team1, team2],
     Number(setsNum),
     isDouble === "true" ? true : false,
+    servingTeam,
   );
 
   //DELETE THIS WHEN DONE
@@ -58,27 +66,16 @@ export default function LiveMatchScreen() {
     console.log(
       "=============================== Current Match Data =============================== ",
     );
-    console.log("Team 1:", team1);
-    console.log("Team 2:", team2);
-    console.log("Live Game:", match.liveGame);
-    console.log("Live Set:", match.sets[match.currentSetIndex]);
-    console.log("Sets:", match.sets);
-    console.log("Match:", match);
+    // console.log("Team 1:", team1);
+    // console.log("Team 2:", team2);
+    // console.log("Live Game:", match.liveGame);
+    // console.log("Live Set:", match.sets[match.currentSetIndex]);
+    // console.log("Sets:", match.sets);
+    // console.log("Match:", match);
+    console.log("Tiebreaker:", match.isTiebreaker);
   };
-
-  const resetMatch = () => {};
 
   const navigation = useNavigation();
-
-  const handleBackToHistory = () => {
-    // 1. Force the current stack screen to animate out to the right
-    navigation.setOptions({
-      animation: "slide_from_left",
-    });
-
-    // 2. Head back to your homepage list
-    router.navigate("/");
-  };
 
   return (
     <View style={styles.container}>
@@ -104,6 +101,37 @@ export default function LiveMatchScreen() {
           <Text style={styles.resetText}>FINISH</Text>
         </Pressable>
       </View>
+
+      <Modal
+        visible={match.matchWinner !== null}
+        transparent={true}
+        animationType="fade"
+      >
+        <View style={styles.modalOverlay}>
+          <View style={styles.modalContent}>
+            <Text style={styles.winnerText}>🏆 Match Over! 🏆</Text>
+
+            <Text style={styles.teamNameText}>
+              Winner: {match.matchWinner?.name}
+            </Text>
+
+            <View style={styles.modalButtonCont}>
+              <TouchableOpacity
+                style={styles.button}
+                onPress={() => {
+                  // Navigate away or reset match
+                  router.back();
+                }}
+              >
+                <Text style={styles.buttonText}>Home</Text>
+              </TouchableOpacity>
+              <TouchableOpacity style={styles.button} onPress={resetMatch}>
+                <Text style={styles.buttonText}>Rematch</Text>
+              </TouchableOpacity>
+            </View>
+          </View>
+        </View>
+      </Modal>
     </View>
   );
 }
@@ -159,6 +187,46 @@ const styles = StyleSheet.create({
   resetText: {
     color: "#ff4444",
     fontSize: 14,
+    fontWeight: "bold",
+  },
+
+  modalOverlay: {
+    flex: 1,
+    backgroundColor: "rgba(0, 0, 0, 0.6)", // Dim background
+    justifyContent: "center",
+    alignItems: "center",
+  },
+  modalContent: {
+    width: "80%",
+    backgroundColor: "white",
+    padding: 24,
+    borderRadius: 16,
+    alignItems: "center",
+    shadowColor: "#000",
+    shadowOffset: { width: 0, height: 2 },
+    shadowOpacity: 0.25,
+    shadowRadius: 4,
+    elevation: 5,
+  },
+  winnerText: { fontSize: 22, fontWeight: "bold", marginBottom: 12 },
+  teamNameText: { fontSize: 18, color: "#333", marginBottom: 20 },
+
+  modalButtonCont: {
+    flexDirection: "row",
+  },
+  button: {
+    backgroundColor: "#34C759",
+    borderRadius: 8,
+    justifyContent: "center",
+    alignItems: "center",
+    minWidth: 100,
+    minHeight: 50,
+    padding: 5,
+    marginHorizontal: 5,
+  },
+  buttonText: {
+    color: "white",
+    fontSize: 16,
     fontWeight: "bold",
   },
 });

@@ -6,10 +6,11 @@ export function useMatch(
   teams: [TeamData, TeamData],
   bestOf: number,
   isDouble: boolean,
+  servingTeam: "team1" | "team2",
 ) {
   const [match, dispatch] = useReducer(
     matchReducer,
-    { teams, bestOf, isDouble },
+    { teams, bestOf, isDouble, servingTeam },
     createInitialMatchData,
   );
 
@@ -31,5 +32,9 @@ export function useMatch(
     dispatch({ type: "UNDO" });
   };
 
-  return { match, scorePoint, undo };
+  const resetMatch = () => {
+    dispatch({ type: "RESET_MATCH" });
+  };
+
+  return { match, scorePoint, undo, resetMatch };
 }

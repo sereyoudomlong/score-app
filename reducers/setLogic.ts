@@ -30,7 +30,21 @@ export const winGame = (
     ...newState,
     sets: updatedSet,
     liveGame: { ...newState.liveGame, gameWon: team },
+    servingTeam: state.servingTeam === "team1" ? "team2" : "team1",
   };
+
+  // check tiebreaker condt
+  if (state.isTiebreaker) {
+    return winSet(newState, team);
+  } else {
+    if (nextTeam1Games === 6 && nextTeam2Games === 6) {
+      newState = {
+        ...newState,
+        isTiebreaker: true,
+        servingTeam: "team1",
+      };
+    }
+  }
 
   // check if the next game won value is enough to win the set
   if (

@@ -1,4 +1,5 @@
 import { MatchData } from "@/constants/types";
+import { Ionicons } from "@expo/vector-icons";
 import { StyleSheet, Text, View } from "react-native";
 
 /**
@@ -26,6 +27,11 @@ export default function MatchCard({ match }: MatchCardProps) {
         <View style={styles.playerRow}>
           <View style={styles.playerInfo}>
             <Text style={styles.playerName}>{match.team1.name}</Text>
+            <Ionicons
+              name="tennisball-outline"
+              size={15}
+              color={match.servingTeam === "team1" ? "#34C759" : "#fff"}
+            />
           </View>
           <View style={styles.scoreContainer}>
             {match.sets?.map((set, index) => (
@@ -38,6 +44,11 @@ export default function MatchCard({ match }: MatchCardProps) {
         <View style={styles.playerRow}>
           <View style={styles.playerInfo}>
             <Text style={styles.playerName}>{match.team2.name}</Text>
+            <Ionicons
+              name="tennisball-outline"
+              size={15}
+              color={match.servingTeam === "team2" ? "#34C759" : "#fff"}
+            />
           </View>
           <View style={styles.scoreContainer}>
             {match.sets?.map((set, index) => (
@@ -101,7 +112,7 @@ const styles = StyleSheet.create({
   playerInfo: {
     flexDirection: "row",
     alignItems: "center",
-    gap: 12,
+    gap: 5,
   },
   playerName: {
     fontSize: 14,

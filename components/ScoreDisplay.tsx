@@ -35,7 +35,11 @@ export const ScoreDisplay = ({ match, onPress }: ScoreDisplayProps) => {
         disabled={!!match.liveGame.gameWon}
       >
         <Text style={styles.playerLabel}>{match.team1.name}</Text>
-        <Text style={styles.scoreText}>{showScore("team1")}</Text>
+        <Text style={styles.scoreText}>
+          {!match.isTiebreaker
+            ? showScore("team1")
+            : match.liveGame.team1Points}
+        </Text>
       </Pressable>
       <LinearGradient
         start={{ x: 0, y: 0 }}
@@ -49,7 +53,11 @@ export const ScoreDisplay = ({ match, onPress }: ScoreDisplayProps) => {
         disabled={!!match.liveGame.gameWon}
       >
         <Text style={styles.playerLabel}>{match.team2.name}</Text>
-        <Text style={styles.scoreText}>{showScore("team2")}</Text>
+        <Text style={styles.scoreText}>
+          {!match.isTiebreaker
+            ? showScore("team2")
+            : match.liveGame.team2Points}
+        </Text>
       </Pressable>
     </View>
   );

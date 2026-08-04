@@ -8,9 +8,6 @@ export const addPoint = (
 ): MatchData => {
   Vibration.vibrate(50);
 
-  if (state.liveGame.isDeuce) {
-    return deuceScore(team, state);
-  }
   // 1. Calculate new points
   const nextP1 =
     team === "team1"
@@ -25,6 +22,15 @@ export const addPoint = (
     ...state,
     liveGame: { ...state.liveGame, team1Points: nextP1, team2Points: nextP2 },
   };
+
+  // if it is a tiebreaker
+  if (state.isTiebreaker) {
+    // check game win condition (score over 7 and ahead by 2 point)
+    if (Math.abs(nextP1 - nextP2) >= 2 && (nextP1 >= 7 || nextP2 >= 7)) {
+      return winGame(team, newState);
+    }
+    return newState;
+  }
 
   // 2. Check for Win, add a new set to list of sets, then move the setIndex by 1
   if (nextP1 === 4 || nextP2 === 4) {

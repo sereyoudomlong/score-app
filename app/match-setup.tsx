@@ -21,7 +21,7 @@ export default function MatchSetupScreen() {
   const [setsNum, setSetsNum] = useState<1 | 3 | 5>(1);
 
   const handleStartMatch = () => {
-    router.push({
+    router.replace({
       pathname: "/live-match",
       params: {
         isDouble: isDoubles ? "true" : "false",
@@ -32,7 +32,7 @@ export default function MatchSetupScreen() {
           t1p2: t1p2.trim() === "" ? "Player 3" : getShortName(t2p1),
           t2p2: t2p2.trim() === "" ? "Player 4" : getShortName(t2p2),
         }),
-        servingTeam: servingTeam,
+        servingTeam: servingTeam === 1 ? "team1" : "team2",
         setsNum: setsNum,
       },
     });

@@ -6,6 +6,7 @@ export type MatchInitArgs = {
   teams: [TeamData, TeamData];
   bestOf: number;
   isDouble: boolean;
+  servingTeam: "team1" | "team2";
 };
 
 export function createInitialMatchData(args: MatchInitArgs): MatchData {
@@ -27,6 +28,9 @@ export function createInitialMatchData(args: MatchInitArgs): MatchData {
     sets: [{ team1GamesWon: 0, team2GamesWon: 0 }],
     history: [],
     duration: 0,
+    servingTeam: args.servingTeam,
+    matchWinner: null,
+    isTiebreaker: false,
     version: 0,
   };
 }
@@ -49,6 +53,14 @@ export function matchReducer(state: MatchData, action: MatchAction): MatchData {
 
     case "UNDO":
       return undo(state);
+
+    case "RESET_MATCH":
+      return createInitialMatchData({
+        teams: [state.team1, state.team2],
+        bestOf: state.bestOf,
+        isDouble: state.isDouble,
+        servingTeam: state.servingTeam,
+      });
 
     default:
       return state;
