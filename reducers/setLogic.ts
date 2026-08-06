@@ -89,6 +89,7 @@ const winSet = (state: MatchData, team: "team1" | "team2"): MatchData => {
     ...newState,
     sets: [...newState.sets, { team1GamesWon: 0, team2GamesWon: 0 }],
     currentSetIndex: newState.currentSetIndex + 1,
+    isTiebreaker: false,
   };
 
   return newState;

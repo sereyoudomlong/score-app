@@ -13,25 +13,51 @@ import { StyleSheet, Text, View } from "react-native";
 
 interface MatchCardProps {
   match: MatchData;
+  history: boolean;
 }
 
-export default function MatchCard({ match }: MatchCardProps) {
+export default function MatchCard({ match, history }: MatchCardProps) {
+  const time = new Date(match.date).toLocaleTimeString("en-AU", {
+    hour: "numeric",
+    minute: "2-digit",
+    hour12: true,
+  });
+
   return (
     <View style={styles.container}>
       <View style={styles.cardHeader}>
         <Text style={styles.headerLeftText}>
           {match.isDouble ? "Double" : "Single"} BO{match.bestOf}
         </Text>
+        {history && <Text style={styles.headerRightText}>{time}</Text>}
       </View>
       <View style={styles.cardBody}>
         <View style={styles.playerRow}>
           <View style={styles.playerInfo}>
-            <Text style={styles.playerName}>{match.team1.name}</Text>
-            <Ionicons
-              name="tennisball-outline"
-              size={15}
-              color={match.servingTeam === "team1" ? "#34C759" : "#fff"}
-            />
+            <Text
+              style={
+                match.matchWinner
+                  ? match.matchWinner.name === match.team1.name
+                    ? styles.winnerText
+                    : styles.loserText
+                  : styles.playerName
+              }
+            >
+              {match.team1.name}
+            </Text>
+            {!history ? (
+              <Ionicons
+                name="tennisball-outline"
+                size={15}
+                color={match.servingTeam === "team1" ? "#34C759" : "#fff"}
+              />
+            ) : (
+              <Ionicons
+                name="trophy"
+                size={15}
+                color={match.servingTeam === "team1" ? "#FFD700" : "#fff"}
+              />
+            )}
           </View>
           <View style={styles.scoreContainer}>
             {match.sets?.map((set, index) => (
@@ -43,12 +69,24 @@ export default function MatchCard({ match }: MatchCardProps) {
         </View>
         <View style={styles.playerRow}>
           <View style={styles.playerInfo}>
-            <Text style={styles.playerName}>{match.team2.name}</Text>
-            <Ionicons
-              name="tennisball-outline"
-              size={15}
-              color={match.servingTeam === "team2" ? "#34C759" : "#fff"}
-            />
+            <Text
+              style={
+                match.matchWinner
+                  ? match.matchWinner.name === match.team2.name
+                    ? styles.winnerText
+                    : styles.loserText
+                  : styles.playerName
+              }
+            >
+              {match.team2.name}
+            </Text>
+            {!history && (
+              <Ionicons
+                name="tennisball-outline"
+                size={15}
+                color={match.servingTeam === "team2" ? "#34C759" : "#fff"}
+              />
+            )}
           </View>
           <View style={styles.scoreContainer}>
             {match.sets?.map((set, index) => (
@@ -69,6 +107,7 @@ const styles = StyleSheet.create({
     height: 120,
     backgroundColor: "#fff",
     borderRadius: 10,
+    alignSelf: "center",
 
     // Shadow for iOS
     shadowColor: "#000",
@@ -77,6 +116,7 @@ const styles = StyleSheet.create({
     shadowRadius: 4,
     // Shadow for Android
     elevation: 3,
+    marginHorizontal: 10,
   },
   cardHeader: {
     backgroundColor: "#34C759",
@@ -118,6 +158,14 @@ const styles = StyleSheet.create({
     fontSize: 14,
     fontWeight: "500",
     color: "#333333",
+  },
+  winnerText: {
+    fontWeight: "700",
+    color: "#1c2711",
+  },
+  loserText: {
+    fontWeight: "400",
+    color: "#6b7280", // Muted gray
   },
   scoreContainer: {
     flexDirection: "row",

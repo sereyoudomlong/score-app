@@ -23,12 +23,15 @@ export const addPoint = (
     liveGame: { ...state.liveGame, team1Points: nextP1, team2Points: nextP2 },
   };
 
+  // if deuce
+  if (state.liveGame.isDeuce) {
+    newState = deuceScore(team, state);
+    return newState;
+  }
+
   // if it is a tiebreaker
   if (state.isTiebreaker) {
-    // check game win condition (score over 7 and ahead by 2 point)
-    if (Math.abs(nextP1 - nextP2) >= 2 && (nextP1 >= 7 || nextP2 >= 7)) {
-      return winGame(team, newState);
-    }
+    newState = tiebreakerScore(team, newState);
     return newState;
   }
 
@@ -67,4 +70,34 @@ const deuceScore = (team: "team1" | "team2", state: MatchData): MatchData => {
     newState = { ...newState, liveGame: { ...newState.liveGame, adv: team } };
   }
   return newState;
+};
+
+const tiebreakerScore = (
+  team: "team1" | "team2",
+  state: MatchData,
+): MatchData => {
+  let team1Score = state.liveGame.team1Points;
+  let team2Score = state.liveGame.team2Points;
+
+  if (
+    Math.abs(team1Score - team2Score) >= 2 &&
+    (team1Score >= 7 || team2Score >= 7)
+  ) {
+    return winGame(team, state);
+  }
+
+  let totalPoint = state.liveGame.team1Points + state.liveGame.team2Points;
+
+  //swap server every odd point
+  if (totalPoint % 2 === 1) {
+    let nextServer: "team1" | "team2" =
+      state.servingTeam === "team1" ? "team2" : "team1";
+
+    return {
+      ...state,
+      servingTeam: nextServer,
+    };
+  }
+
+  return state;
 };

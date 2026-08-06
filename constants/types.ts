@@ -36,12 +36,14 @@ export type MatchData = {
   team1: TeamData;
   team2: TeamData;
   bestOf: number;
+  date: Date;
   isDouble: boolean;
   liveGame: GameData;
   currentSetIndex: number;
   sets: SetData[];
   history: MatchHistoryData[];
   duration: number;
+  lastServer: "team1" | "team2" | null;
   servingTeam: "team1" | "team2";
   matchWinner?: TeamData | null;
   isTiebreaker: boolean;

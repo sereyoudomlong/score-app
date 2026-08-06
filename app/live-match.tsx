@@ -2,8 +2,9 @@ import MatchCard from "@/components/MatchCard";
 import { ScoreDisplay } from "@/components/ScoreDisplay";
 import { PlayerData, TeamData } from "@/constants/types";
 import { useMatch } from "@/hooks/useMatch";
+import { useMatchDB } from "@/hooks/useMatchDB";
 import Ionicons from "@expo/vector-icons/Ionicons";
-import { router, useLocalSearchParams, useNavigation } from "expo-router";
+import { router, useLocalSearchParams } from "expo-router";
 import { useEffect, useState } from "react";
 import {
   Modal,
@@ -13,7 +14,6 @@ import {
   TouchableOpacity,
   View,
 } from "react-native";
-// import * as Watch from "react-native-watch-connectivity";
 
 export default function LiveMatchScreen() {
   const { isDouble, t1p1, t1p2, t2p1, t2p2, servingTeam, setsNum } =
@@ -56,6 +56,8 @@ export default function LiveMatchScreen() {
     servingTeam,
   );
 
+  const { saveCompletedMatch, deleteAllMatches } = useMatchDB();
+
   //DELETE THIS WHEN DONE
   useEffect(() => {
     printData();
@@ -75,8 +77,6 @@ export default function LiveMatchScreen() {
     console.log("Tiebreaker:", match.isTiebreaker);
   };
 
-  const navigation = useNavigation();
-
   return (
     <View style={styles.container}>
       {/*TODO? make this header in to a component*/}
@@ -94,7 +94,7 @@ export default function LiveMatchScreen() {
         </Pressable>
       </View>
 
-      <MatchCard match={match} />
+      <MatchCard match={match} history={false} />
       <ScoreDisplay match={match} onPress={scorePoint}></ScoreDisplay>
       <View style={styles.bottomContainer}>
         <Pressable style={styles.resetButton} onPress={resetMatch}>
@@ -119,6 +119,7 @@ export default function LiveMatchScreen() {
               <TouchableOpacity
                 style={styles.button}
                 onPress={() => {
+                  saveCompletedMatch(match);
                   // Navigate away or reset match
                   router.back();
                 }}

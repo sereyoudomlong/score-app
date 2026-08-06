@@ -15,6 +15,7 @@ export function createInitialMatchData(args: MatchInitArgs): MatchData {
     team1: args.teams[0],
     team2: args.teams[1],
     bestOf: args.bestOf,
+    date: new Date(),
     isDouble: args.isDouble,
     liveGame: {
       gameID: undefined,
@@ -28,6 +29,7 @@ export function createInitialMatchData(args: MatchInitArgs): MatchData {
     sets: [{ team1GamesWon: 0, team2GamesWon: 0 }],
     history: [],
     duration: 0,
+    lastServer: null,
     servingTeam: args.servingTeam,
     matchWinner: null,
     isTiebreaker: false,
