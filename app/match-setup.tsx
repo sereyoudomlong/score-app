@@ -29,7 +29,7 @@ export default function MatchSetupScreen() {
         t2p1: t2p1.trim() === "" ? "Player 2" : getShortName(t2p1),
 
         ...(isDoubles && {
-          t1p2: t1p2.trim() === "" ? "Player 3" : getShortName(t2p1),
+          t1p2: t1p2.trim() === "" ? "Player 3" : getShortName(t1p2),
           t2p2: t2p2.trim() === "" ? "Player 4" : getShortName(t2p2),
         }),
         servingTeam: servingTeam === 1 ? "team1" : "team2",

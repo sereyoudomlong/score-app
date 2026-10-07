@@ -24,6 +24,7 @@ export function createInitialMatchData(args: MatchInitArgs): MatchData {
       isDeuce: false,
       adv: null,
       gameWon: null,
+      isTiebreak: false,
     },
     currentSetIndex: 0,
     sets: [{ team1GamesWon: 0, team2GamesWon: 0 }],
@@ -44,6 +45,9 @@ export function matchReducer(state: MatchData, action: MatchAction): MatchData {
         liveGame: state.liveGame,
         sets: state.sets,
         currentSetIndex: state.currentSetIndex,
+        servingTeam: state.servingTeam,
+        isTiebreaker: state.isTiebreaker,
+        matchWinner: state.matchWinner,
       };
 
       let newState = addPoint(action.team, state);

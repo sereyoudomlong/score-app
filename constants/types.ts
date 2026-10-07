@@ -16,6 +16,7 @@ export type GameData = {
   isDeuce: boolean;
   adv?: "team1" | "team2" | null;
   gameWon?: "team1" | "team2" | null;
+  isTiebreak?: boolean; // true if this game is a tiebreak game (used for display)
 };
 
 export type SetData = {
@@ -29,6 +30,9 @@ export type MatchHistoryData = {
   liveGame: GameData;
   sets: SetData[];
   currentSetIndex: number;
+  servingTeam: "team1" | "team2";
+  isTiebreaker: boolean;
+  matchWinner?: TeamData | null;
 };
 
 export type MatchData = {

@@ -15,6 +15,16 @@ export const ScoreDisplay = ({ match, onPress }: ScoreDisplayProps) => {
     if (match.liveGame.gameWon === team) {
       return "Game";
     }
+
+    // Tiebreak games show plain numbers (1, 2, 3...).
+    // Uses the game's own flag, not match.isTiebreaker, because that flag
+    // changes the moment 6-6 is reached, while the finished game is still on screen.
+    if (match.liveGame.isTiebreak) {
+      return team === "team1"
+        ? match.liveGame.team1Points
+        : match.liveGame.team2Points;
+    }
+
     if (match.liveGame.isDeuce && match.liveGame.adv === team) {
       return "AD";
     }
@@ -36,9 +46,7 @@ export const ScoreDisplay = ({ match, onPress }: ScoreDisplayProps) => {
       >
         <Text style={styles.playerLabel}>{match.team1.name}</Text>
         <Text style={styles.scoreText}>
-          {!match.isTiebreaker
-            ? showScore("team1")
-            : match.liveGame.team1Points}
+          {showScore("team1")}
         </Text>
       </Pressable>
       <LinearGradient
@@ -54,9 +62,7 @@ export const ScoreDisplay = ({ match, onPress }: ScoreDisplayProps) => {
       >
         <Text style={styles.playerLabel}>{match.team2.name}</Text>
         <Text style={styles.scoreText}>
-          {!match.isTiebreaker
-            ? showScore("team2")
-            : match.liveGame.team2Points}
+          {showScore("team2")}
         </Text>
       </Pressable>
     </View>

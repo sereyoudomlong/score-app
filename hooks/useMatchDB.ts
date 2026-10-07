@@ -5,7 +5,12 @@ import { Realm, useQuery, useRealm } from "@realm/react";
 export function useMatchDB() {
   const realm = useRealm();
 
-  const completedMatches = useQuery<CompletedMatchSchema>("CompletedMatch");
+  // newest matches first (sorted by the date the match was saved)
+  const completedMatches = useQuery<CompletedMatchSchema>(
+    "CompletedMatch",
+    (matches) => matches.sorted("date", true),
+    [],
+  );
 
   const saveCompletedMatch = (matchData: MatchData) => {
     realm.write(() => {

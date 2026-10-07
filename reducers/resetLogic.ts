@@ -14,6 +14,9 @@ export const undo = (state: MatchData): MatchData => {
     liveGame: previousSnapShot.liveGame,
     sets: previousSnapShot.sets,
     currentSetIndex: previousSnapShot.currentSetIndex,
+    servingTeam: previousSnapShot.servingTeam,
+    isTiebreaker: previousSnapShot.isTiebreaker,
+    matchWinner: previousSnapShot.matchWinner,
     history: updatedHistory,
   };
 };
@@ -29,6 +32,8 @@ export const resetGame = (state: MatchData): MatchData => {
       isDeuce: false,
       adv: null,
       gameWon: null,
+      // the next game is a tiebreak if the set just reached 6-6
+      isTiebreak: state.isTiebreaker,
     },
   };
   return newState;
