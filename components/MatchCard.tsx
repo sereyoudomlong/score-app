@@ -23,6 +23,10 @@ export default function MatchCard({ match, history }: MatchCardProps) {
     hour12: true,
   });
 
+  // true if this team won the match (used for the trophy in match history)
+  const isWinner = (team: "team1" | "team2") =>
+    !!match.matchWinner && match.matchWinner.name === match[team].name;
+
   return (
     <View style={styles.container}>
       <View style={styles.cardHeader}>
@@ -55,7 +59,7 @@ export default function MatchCard({ match, history }: MatchCardProps) {
               <Ionicons
                 name="trophy"
                 size={15}
-                color={match.servingTeam === "team1" ? "#FFD700" : "#fff"}
+                color={isWinner("team1") ? "#FFD700" : "#fff"}
               />
             )}
           </View>
@@ -80,11 +84,17 @@ export default function MatchCard({ match, history }: MatchCardProps) {
             >
               {match.team2.name}
             </Text>
-            {!history && (
+            {!history ? (
               <Ionicons
                 name="tennisball-outline"
                 size={15}
                 color={match.servingTeam === "team2" ? "#34C759" : "#fff"}
+              />
+            ) : (
+              <Ionicons
+                name="trophy"
+                size={15}
+                color={isWinner("team2") ? "#FFD700" : "#fff"}
               />
             )}
           </View>

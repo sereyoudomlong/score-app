@@ -53,8 +53,6 @@ export default function Homepage() {
     (acc, match) => {
       const dateKey = match.date;
 
-      console.log(match.date);
-
       // If the date key doesn't exist yet, initialize an empty array
       if (!acc[dateKey]) {
         acc[dateKey] = [];

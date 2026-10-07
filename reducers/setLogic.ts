@@ -4,7 +4,6 @@ export const winGame = (
   team: "team1" | "team2",
   state: MatchData,
 ): MatchData => {
-  console.log("lalallalalalala");
   const currentIndex = state.currentSetIndex;
   let newState = { ...state };
   let updatedSet = [...newState.sets];
@@ -58,7 +57,6 @@ export const winGame = (
     return winSet(newState, team);
   }
 
-  console.log(newState);
   return newState;
 };
 

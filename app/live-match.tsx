@@ -5,7 +5,7 @@ import { useMatch } from "@/hooks/useMatch";
 import { useMatchDB } from "@/hooks/useMatchDB";
 import Ionicons from "@expo/vector-icons/Ionicons";
 import { router, useLocalSearchParams } from "expo-router";
-import { useEffect, useState } from "react";
+import { useState } from "react";
 import {
   Modal,
   Pressable,
@@ -57,25 +57,6 @@ export default function LiveMatchScreen() {
   );
 
   const { saveCompletedMatch, deleteAllMatches } = useMatchDB();
-
-  //DELETE THIS WHEN DONE
-  useEffect(() => {
-    printData();
-  }, [match.liveGame]);
-
-  //DELETE THIS WHEN DONE
-  const printData = () => {
-    console.log(
-      "=============================== Current Match Data =============================== ",
-    );
-    // console.log("Team 1:", team1);
-    // console.log("Team 2:", team2);
-    // console.log("Live Game:", match.liveGame);
-    // console.log("Live Set:", match.sets[match.currentSetIndex]);
-    // console.log("Sets:", match.sets);
-    // console.log("Match:", match);
-    console.log("Tiebreaker:", match.isTiebreaker);
-  };
 
   return (
     <View style={styles.container}>
