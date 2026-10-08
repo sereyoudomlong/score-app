@@ -32,6 +32,7 @@ export function createInitialMatchData(args: MatchInitArgs): MatchData {
     history: [],
     duration: 0,
     servingTeam: args.servingTeam,
+    startingServer: args.servingTeam,
     matchWinner: null,
     isTiebreaker: false,
     version: 0,
@@ -65,7 +66,9 @@ export function matchReducer(state: MatchData, action: MatchAction): MatchData {
         teams: [state.team1, state.team2],
         bestOf: state.bestOf,
         isDouble: state.isDouble,
-        servingTeam: state.servingTeam,
+        // rematch starts with the server picked on the setup screen,
+        // not whoever happened to be serving at the end
+        servingTeam: state.startingServer,
       });
 
     default:

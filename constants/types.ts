@@ -49,6 +49,7 @@ export type MatchData = {
   history: MatchHistoryData[];
   duration: number;
   servingTeam: "team1" | "team2";
+  startingServer: "team1" | "team2"; // who was picked to serve first on the setup screen (used for rematch)
   matchWinner?: TeamData | null;
   isTiebreaker: boolean;
   version: number;
