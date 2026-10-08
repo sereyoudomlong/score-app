@@ -32,17 +32,13 @@ export default function LiveMatchScreen() {
       setsNum: string;
     }>();
 
-  const [team1Players, setTeam1Players] = useState<PlayerData[]>(() => {
-    const players = [{ name: t1p1 }];
-    if (t1p2) players.push({ name: t1p2 });
-    return players;
-  });
-
-  const [team2Players, setTeam2Players] = useState<PlayerData[]>(() => {
-    const players = [{ name: t2p1 }];
-    if (t2p2) players.push({ name: t2p2 });
-    return players;
-  });
+  // players never change during a match, so these don't need to be state
+  const team1Players: PlayerData[] = t1p2
+    ? [{ name: t1p1 }, { name: t1p2 }]
+    : [{ name: t1p1 }];
+  const team2Players: PlayerData[] = t2p2
+    ? [{ name: t2p1 }, { name: t2p2 }]
+    : [{ name: t2p1 }];
 
   const team1: TeamData = {
     players: team1Players,
@@ -61,7 +57,7 @@ export default function LiveMatchScreen() {
     servingTeam,
   );
 
-  const { saveCompletedMatch, deleteAllMatches } = useMatchDB();
+  const { saveCompletedMatch } = useMatchDB();
 
   // Save the match automatically, once, as soon as it has a winner.
   // The buttons in the "Match Over" modal then don't need to save,

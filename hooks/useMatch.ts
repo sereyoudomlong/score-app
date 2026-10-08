@@ -1,6 +1,7 @@
 import { TeamData } from "@/constants/types";
 import { createInitialMatchData, matchReducer } from "@/reducers/matchReducers";
 import { useEffect, useReducer } from "react";
+import { Vibration } from "react-native";
 
 export function useMatch(
   teams: [TeamData, TeamData],
@@ -25,6 +26,9 @@ export function useMatch(
   }, [match.liveGame.gameWon]);
 
   const scorePoint = (team: "team1" | "team2") => {
+    // side effects like vibration belong here, not in the reducer
+    // (React can run reducers twice in dev mode, which would buzz twice)
+    Vibration.vibrate(50);
     dispatch({ type: "SCORE_POINT", team });
   };
 

@@ -38,11 +38,12 @@ export default function MatchSetupScreen() {
   };
 
   const getShortName = (name: string) => {
-    const parts = name.trim().split(" ");
+    // split on any run of spaces, so "John  Smith" doesn't give an empty part
+    const parts = name.trim().split(/\s+/);
     if (parts.length > 1) {
       return `${parts[0]} ${parts[1][0]}.`; // e.g., "Alexander S."
     }
-    return name;
+    return parts[0]; // trimmed, so " John " becomes "John"
   };
 
   return (

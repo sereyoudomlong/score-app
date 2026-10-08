@@ -1,13 +1,10 @@
 import { MatchData } from "@/constants/types";
-import { Vibration } from "react-native";
 import { winGame } from "./setLogic";
 
 export const addPoint = (
   team: "team1" | "team2",
   state: MatchData,
 ): MatchData => {
-  Vibration.vibrate(50);
-
   // 1. Calculate new points
   const nextP1 =
     team === "team1"

@@ -6,7 +6,7 @@ type teamID = "team1" | "team2";
 
 interface ScoreDisplayProps {
   match: MatchData;
-  onPress: (team: teamID, isDeuce: boolean) => void;
+  onPress: (team: teamID) => void;
 }
 
 export const ScoreDisplay = ({ match, onPress }: ScoreDisplayProps) => {
@@ -41,7 +41,7 @@ export const ScoreDisplay = ({ match, onPress }: ScoreDisplayProps) => {
     <View style={styles.scoreBoard}>
       <Pressable
         style={styles.playerSection}
-        onPress={() => onPress("team1", match.liveGame.isDeuce)}
+        onPress={() => onPress("team1")}
         disabled={!!match.liveGame.gameWon}
       >
         <Text style={styles.playerLabel}>{match.team1.name}</Text>
@@ -57,7 +57,7 @@ export const ScoreDisplay = ({ match, onPress }: ScoreDisplayProps) => {
       />
       <Pressable
         style={styles.playerSection}
-        onPress={() => onPress("team2", match.liveGame.isDeuce)}
+        onPress={() => onPress("team2")}
         disabled={!!match.liveGame.gameWon}
       >
         <Text style={styles.playerLabel}>{match.team2.name}</Text>
