@@ -1,4 +1,5 @@
 import MatchCard from "@/components/MatchCard";
+import PageHeader from "@/components/PageHeader";
 import { ScoreDisplay } from "@/components/ScoreDisplay";
 import { PlayerData, TeamData } from "@/constants/types";
 import { useMatch } from "@/hooks/useMatch";
@@ -99,20 +100,14 @@ export default function LiveMatchScreen() {
 
   return (
     <View style={styles.container}>
-      {/*TODO? make this header in to a component*/}
-      <View style={styles.pageHeader}>
-        <Pressable onPress={() => router.back()} style={styles.headerButton}>
-          <Ionicons name="chevron-back" size={20} color="#000" />
-          <Text style={styles.backText}>Back</Text>
-        </Pressable>
-        <Text style={styles.headerTitle}>Scoreboard</Text>
-        <Pressable
-          onPress={undo}
-          style={[styles.headerButton, { justifyContent: "flex-end" }]} // Overrides the default space-between to align this button to the right
-        >
-          <Ionicons name="arrow-undo-outline" size={24} color="#000" />
-        </Pressable>
-      </View>
+      <PageHeader
+        title="Scoreboard"
+        right={
+          <Pressable onPress={undo}>
+            <Ionicons name="arrow-undo-outline" size={24} color="#000" />
+          </Pressable>
+        }
+      />
 
       <MatchCard match={match} history={false} />
       <ScoreDisplay match={match} onPress={scorePoint}></ScoreDisplay>
@@ -184,37 +179,7 @@ const styles = StyleSheet.create({
     flex: 1,
     alignItems: "center",
     backgroundColor: "#ffffff",
-    paddingTop: 20,
     paddingBottom: 60, // space where the FINISH button used to be
-  },
-  pageHeader: {
-    flexDirection: "row",
-    alignItems: "center",
-    justifyContent: "space-between",
-    height: 60,
-    width: "100%",
-    paddingHorizontal: 16,
-    borderBottomWidth: StyleSheet.hairlineWidth,
-    borderBottomColor: "#e5e5e5",
-    marginBottom: 20,
-    marginTop: 44, // <-- Crucial: Pushes the custom header below the iPhone Dynamic Island / Notch
-  },
-  headerButton: {
-    flexDirection: "row",
-    alignItems: "flex-start",
-    width: 80, // Fixed width guarantees the center title stays perfectly centered
-    paddingVertical: 8,
-  },
-  backText: {
-    fontSize: 17,
-    color: "#000",
-    marginLeft: 2,
-  },
-  headerTitle: {
-    fontSize: 17,
-    fontWeight: "600",
-    color: "#000",
-    textAlign: "center",
   },
 
   modalOverlay: {
