@@ -5,7 +5,7 @@ import { useMatch } from "@/hooks/useMatch";
 import { useMatchDB } from "@/hooks/useMatchDB";
 import Ionicons from "@expo/vector-icons/Ionicons";
 import { router, useLocalSearchParams } from "expo-router";
-import { useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import {
   Modal,
   Pressable,
@@ -58,6 +58,21 @@ export default function LiveMatchScreen() {
 
   const { saveCompletedMatch, deleteAllMatches } = useMatchDB();
 
+  // Save the match automatically, once, as soon as it has a winner.
+  // The buttons in the "Match Over" modal then don't need to save,
+  // so Rematch keeps the finished match and double-tapping Home can't save twice.
+  const savedRef = useRef(false);
+  useEffect(() => {
+    if (match.matchWinner && !savedRef.current) {
+      savedRef.current = true;
+      saveCompletedMatch(match);
+    }
+    // a rematch clears the winner, so the next match can be saved too
+    if (!match.matchWinner) {
+      savedRef.current = false;
+    }
+  }, [match.matchWinner]);
+
   return (
     <View style={styles.container}>
       {/*TODO? make this header in to a component*/}
@@ -99,11 +114,7 @@ export default function LiveMatchScreen() {
             <View style={styles.modalButtonCont}>
               <TouchableOpacity
                 style={styles.button}
-                onPress={() => {
-                  saveCompletedMatch(match);
-                  // Navigate away or reset match
-                  router.back();
-                }}
+                onPress={() => router.back()}
               >
                 <Text style={styles.buttonText}>Home</Text>
               </TouchableOpacity>
