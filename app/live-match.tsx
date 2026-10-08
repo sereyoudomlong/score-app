@@ -4,7 +4,11 @@ import { PlayerData, TeamData } from "@/constants/types";
 import { useMatch } from "@/hooks/useMatch";
 import { useMatchDB } from "@/hooks/useMatchDB";
 import Ionicons from "@expo/vector-icons/Ionicons";
-import { router, useLocalSearchParams } from "expo-router";
+import {
+  NavigationAction,
+  usePreventRemove,
+} from "@react-navigation/native";
+import { router, useLocalSearchParams, useNavigation } from "expo-router";
 import { useEffect, useRef, useState } from "react";
 import {
   Modal,
@@ -73,6 +77,26 @@ export default function LiveMatchScreen() {
     }
   }, [match.matchWinner]);
 
+  // Ask before leaving a match that has started but isn't finished.
+  // usePreventRemove catches every way of leaving: the Back button,
+  // the Android back button/gesture, and the iOS swipe.
+  const navigation = useNavigation();
+  const [pendingLeave, setPendingLeave] = useState<NavigationAction | null>(
+    null,
+  );
+  const matchInProgress = match.history.length > 0 && !match.matchWinner;
+
+  usePreventRemove(matchInProgress, ({ data }) => {
+    // remember how the user tried to leave, then show the confirmation modal
+    setPendingLeave(data.action);
+  });
+
+  const confirmLeave = () => {
+    const action = pendingLeave;
+    setPendingLeave(null);
+    if (action) navigation.dispatch(action); // carry on with the original back action
+  };
+
   return (
     <View style={styles.container}>
       {/*TODO? make this header in to a component*/}
@@ -92,12 +116,6 @@ export default function LiveMatchScreen() {
 
       <MatchCard match={match} history={false} />
       <ScoreDisplay match={match} onPress={scorePoint}></ScoreDisplay>
-      <View style={styles.bottomContainer}>
-        <Pressable style={styles.resetButton} onPress={resetMatch}>
-          <Text style={styles.resetText}>FINISH</Text>
-        </Pressable>
-      </View>
-
       <Modal
         visible={match.matchWinner !== null}
         transparent={true}
@@ -125,6 +143,38 @@ export default function LiveMatchScreen() {
           </View>
         </View>
       </Modal>
+
+      {/* Confirmation when leaving an unfinished match */}
+      <Modal
+        visible={pendingLeave !== null}
+        transparent={true}
+        animationType="fade"
+        onRequestClose={() => setPendingLeave(null)} // Android back = Stay
+      >
+        <View style={styles.modalOverlay}>
+          <View style={styles.modalContent}>
+            <Text style={styles.winnerText}>Leave match?</Text>
+            <Text style={styles.leaveMessage}>
+              This match isn't finished. If you leave now, it won't be saved.
+            </Text>
+
+            <View style={styles.modalButtonCont}>
+              <TouchableOpacity
+                style={styles.button}
+                onPress={() => setPendingLeave(null)}
+              >
+                <Text style={styles.buttonText}>Stay</Text>
+              </TouchableOpacity>
+              <TouchableOpacity
+                style={[styles.button, styles.leaveButton]}
+                onPress={confirmLeave}
+              >
+                <Text style={styles.buttonText}>Leave</Text>
+              </TouchableOpacity>
+            </View>
+          </View>
+        </View>
+      </Modal>
     </View>
   );
 }
@@ -135,6 +185,7 @@ const styles = StyleSheet.create({
     alignItems: "center",
     backgroundColor: "#ffffff",
     paddingTop: 20,
+    paddingBottom: 60, // space where the FINISH button used to be
   },
   pageHeader: {
     flexDirection: "row",
@@ -165,23 +216,6 @@ const styles = StyleSheet.create({
     color: "#000",
     textAlign: "center",
   },
-  bottomContainer: {
-    width: "100%",
-    paddingHorizontal: 16,
-    borderTopWidth: StyleSheet.hairlineWidth,
-    borderTopColor: "#e5e5e5",
-    flexDirection: "row",
-    justifyContent: "center",
-  },
-  resetButton: {
-    marginBottom: 40,
-    padding: 20,
-  },
-  resetText: {
-    color: "#ff4444",
-    fontSize: 14,
-    fontWeight: "bold",
-  },
 
   modalOverlay: {
     flex: 1,
@@ -203,6 +237,15 @@ const styles = StyleSheet.create({
   },
   winnerText: { fontSize: 22, fontWeight: "bold", marginBottom: 12 },
   teamNameText: { fontSize: 18, color: "#333", marginBottom: 20 },
+  leaveMessage: {
+    fontSize: 16,
+    color: "#333",
+    textAlign: "center",
+    marginBottom: 20,
+  },
+  leaveButton: {
+    backgroundColor: "#ff4444",
+  },
 
   modalButtonCont: {
     flexDirection: "row",
