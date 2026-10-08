@@ -8,7 +8,9 @@ export default function RootLayout() {
     <>
       <RealmProvider
         schema={[CompletedMatchSchema]}
-        deleteRealmIfMigrationNeeded
+        // Bump this number whenever db/schema.ts changes, so Realm upgrades
+        // the database and keeps saved matches (instead of deleting them).
+        schemaVersion={1}
       >
         {/* This ensures your status bar (clock/battery) stays white on a dark app */}
         <StatusBar style="dark" />
