@@ -29,7 +29,9 @@ export const winGame = (
     ...newState,
     sets: updatedSet,
     liveGame: { ...newState.liveGame, gameWon: team },
-    servingTeam: state.servingTeam === "team1" ? "team2" : "team1",
+    // the other team serves the next game. Uses who served FIRST in this game,
+    // because in a tiebreak the server rotates during the game.
+    servingTeam: state.liveGame.firstServer === "team1" ? "team2" : "team1",
   };
 
   // check tiebreaker condt
@@ -40,7 +42,6 @@ export const winGame = (
       newState = {
         ...newState,
         isTiebreaker: true,
-        servingTeam: "team1",
       };
     }
   }

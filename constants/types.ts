@@ -16,6 +16,7 @@ export type GameData = {
   isDeuce: boolean;
   adv?: "team1" | "team2" | null;
   gameWon?: "team1" | "team2" | null;
+  firstServer: "team1" | "team2"; // who served first in this game; the other team serves the next game
   isTiebreak?: boolean; // true if this game is a tiebreak game (used for display)
 };
 
@@ -47,7 +48,6 @@ export type MatchData = {
   sets: SetData[];
   history: MatchHistoryData[];
   duration: number;
-  lastServer: "team1" | "team2" | null;
   servingTeam: "team1" | "team2";
   matchWinner?: TeamData | null;
   isTiebreaker: boolean;

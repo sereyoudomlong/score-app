@@ -32,6 +32,8 @@ export const resetGame = (state: MatchData): MatchData => {
       isDeuce: false,
       adv: null,
       gameWon: null,
+      // winGame already switched servingTeam to whoever serves next
+      firstServer: state.servingTeam,
       // the next game is a tiebreak if the set just reached 6-6
       isTiebreak: state.isTiebreaker,
     },
