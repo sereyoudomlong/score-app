@@ -3,6 +3,7 @@ import { MatchData } from "@/constants/types";
 import { CompletedMatchSchema } from "@/db/schema";
 import { useMatchDB } from "@/hooks/useMatchDB";
 import { router } from "expo-router";
+import { useMemo } from "react";
 import {
   SectionList,
   StyleSheet,
@@ -23,30 +24,25 @@ export default function Homepage() {
   // get the data from match db using the custom hook
   const { completedMatches } = useMatchDB();
 
-  // destructure it to use for displaying
-  const matchDataList = completedMatches.map((item) => {
-    const match = item as CompletedMatchSchema;
-    return {
-      id: match._id,
-      date: new Date(JSON.parse(match.matchDataJson).date).toLocaleDateString(
-        "en-AU",
-        {
-          day: "numeric",
-          month: "long",
-          year: "numeric",
-        },
-      ),
-      time: new Date(JSON.parse(match.matchDataJson).date).toLocaleTimeString(
-        "en-AU",
-        {
-          hour: "numeric",
-          minute: "2-digit",
-          hour12: true,
-        },
-      ),
-      matchData: JSON.parse(match.matchDataJson) as MatchData,
-    };
-  });
+  // Parse each saved match ONCE, and only when the saved matches change
+  // (useMemo), instead of three times on every render.
+  const matchDataList = useMemo(
+    () =>
+      completedMatches.map((item) => {
+        const match = item as CompletedMatchSchema;
+        const matchData = JSON.parse(match.matchDataJson) as MatchData;
+        return {
+          id: match._id,
+          date: new Date(matchData.date).toLocaleDateString("en-AU", {
+            day: "numeric",
+            month: "long",
+            year: "numeric",
+          }),
+          matchData,
+        };
+      }),
+    [completedMatches],
+  );
 
   // 1. Group matches by date key (e.g., "6 Aug 2026")
   const groupedMatches = matchDataList.reduce(

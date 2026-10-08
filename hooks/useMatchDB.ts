@@ -17,7 +17,9 @@ export function useMatchDB() {
       realm.create(CompletedMatchSchema, {
         _id: new Realm.BSON.ObjectId(),
         date: new Date(),
-        matchDataJson: JSON.stringify(matchData),
+        // the undo history is only needed while the match is being played,
+        // so don't store it (keeps each saved match ~1 KB instead of 50-100+ KB)
+        matchDataJson: JSON.stringify({ ...matchData, history: [] }),
       });
     });
   };
